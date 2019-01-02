@@ -29,11 +29,7 @@ public:
 
     void printProg();
     inline void clearReg();
-<<<<<<< HEAD
     double bid(const vector<double> &feature);
-=======
-    double bid(vector<double> feature);
->>>>>>> 3c9591739bf495b19c8cc1726d7fe0792ecd1061
     inline void incRefCount();
     inline void decRefCount();
     bool mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize);
