@@ -49,9 +49,10 @@ public:
         return pool.size();
     }
 
-    void insert(T item) {
+    void insert(const T& val) {
         rs.insert(count);
-        pool[count++] = item;
+        pool.insert({count, val});
+        count++;
     }
 
     pair<long long, T&> random() {
