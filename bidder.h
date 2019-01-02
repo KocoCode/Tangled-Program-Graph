@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <unordered_set>
 #include "instruction.h"
@@ -28,6 +29,7 @@ public:
     Bidder(const Bidder &toCopy, long genTime);
 
     void printProg();
+    inline long getId();
     inline void clearReg();
     double bid(const vector<double> &feature);
     inline void incRefCount();

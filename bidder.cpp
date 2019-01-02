@@ -115,6 +115,10 @@ void Bidder::printProg() {
     }
 }
 
+long Bidder::getId() {
+    return id;
+}
+
 void Bidder::clearReg() {
     fill(REG.begin(), REG.end(), 0);
 }
