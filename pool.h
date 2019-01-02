@@ -45,9 +45,10 @@ private:
 
 public:
     unordered_map<long long, T> pool;
-    T create() {
+
+    long long insert(const T& val) {
         rs.insert(count);
-        pool[count];
+        pool.insert({count, val});
         return count++;
     }
 

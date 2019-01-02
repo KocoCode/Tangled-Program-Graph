@@ -7,7 +7,7 @@ using namespace std;
 int main() {
     Pool<int> pool;
     for (int i = 0; i < 100; ++i) {
-        pool.pool[pool.create()] = i;
+        pool.insert(i);
     }
     for (int i = 0; i < 1000; ++i) {
         int r = pool.random().second;
@@ -23,7 +23,7 @@ int main() {
         assert(pool.pool[r] == 50);
     }
     for (int i = 0; i < 50; ++i) {
-        pool.pool[pool.create()] = i;
+        pool.insert(i);
     }
     for (int i = 0; i < 1000; ++i) {
         int r = pool.random().second;
