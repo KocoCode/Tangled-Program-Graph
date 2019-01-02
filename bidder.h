@@ -28,4 +28,6 @@ public:
     Bidder(const Bidder &toCopy, long genTime);
 
     void printProg();
+    inline void clearReg();
+    double bid(vector<double> feature);
 };

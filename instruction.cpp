@@ -32,5 +32,5 @@ void printInstr(instruction instr) {
     if (mode == mode0)
         cout << "R[" << ((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE << "]" << endl;
     else
-        cout << "feature[" << ((instr & srcMask) >> srcShift).to_ulong() << "(%dim)]" << endl;
+        cout << "I[" << ((instr & srcMask) >> srcShift).to_ulong() << "(%dim)]" << endl;
 }

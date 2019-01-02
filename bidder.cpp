@@ -1,8 +1,17 @@
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 #include "bidder.h"
 
+#define SHOWEXEC
+
 using std::reverse;
+using std::fill;
+using std::cos;
+using std::log;
+using std::fabs;
+using std::exp;
+using std::isfinite;
 using std::cout;
 using std::endl;
 
@@ -103,4 +112,128 @@ void Bidder::printProg() {
         printInstr(instr);
         ++count;
     }
+}
+
+void Bidder::clearReg() {
+    fill(REG.begin(), REG.end(), 0);
+}
+
+double Bidder::bid(vector<double> feature) {
+#ifdef SHOWEXEC
+	cout << "FEATURE:";
+	for(int i = 0; i < featureDimension; i++)
+		cout << " " << feature[i];
+	cout << endl << "REG:";
+	for(int i = 0; i < REGISTER_SIZE; i++)
+		cout << " " << REG[i];
+	cout << endl;
+#endif
+
+	for(int i = 0; i < prog.size(); i++) {
+		if(isIntron[i]) // Skip introns
+			continue;
+        instruction instr = prog[i];
+
+		instruction mode = (instr & modeMask) >> modeShift;
+		instruction op = (instr & opMask) >> opShift;
+
+		// Should be between 0 and REGISTER_SIZE - 1
+
+		int dstReg = ((instr & dstMask) >> dstShift).to_ulong();
+
+#ifdef SHOWEXEC
+		cout << i << ": " << instr << endl;
+        cout << "R[" << dstReg << "] <- R[" << dstReg << "] ";
+#endif
+
+        double srcVal;
+        // Rx <- op Rx Ry
+		if(mode == mode0) {
+			srcVal = REG[((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE];
+#ifdef SHOWEXEC
+			cout << "R[" << ((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE << "] ";
+#endif
+		}
+        // Rx <- op Rx Iy
+		else {
+			srcVal = feature[((instr & srcMask) >> srcShift).to_ulong() % featureDimension];
+#ifdef SHOWEXEC
+			cout << "I[" << ((instr & srcMask) >> srcShift).to_ulong() % featureDimension << "] ";
+#endif
+		}
+
+		if(op == opSum)
+		{
+			REG[dstReg] = REG[dstReg] + srcVal;
+#ifdef SHOWEXEC
+			cout << "Sum ";
+#endif
+		}
+		else if(op == opDiff)
+		{
+			REG[dstReg] = REG[dstReg] - srcVal;
+#ifdef SHOWEXEC
+			cout << "Diff ";
+#endif
+		}
+		else if(op == opProd)
+		{
+			REG[dstReg] = REG[dstReg] * srcVal;
+#ifdef SHOWEXEC
+			cout << "Prod ";
+#endif
+		}
+		else if(op == opDiv)
+		{
+			REG[dstReg] = REG[dstReg] / srcVal;
+#ifdef SHOWEXEC
+			cout << "Div ";
+#endif
+		}
+		else if(op == opCos)
+		{
+			REG[dstReg] = cos(srcVal);
+#ifdef SHOWEXEC
+			cout << "Cos ";
+#endif
+		}
+		else if(op == opLog)
+		{
+			REG[dstReg] = log(fabs(srcVal));
+#ifdef SHOWEXEC
+			cout << "Log ";
+#endif
+		}
+		else if(op == opExp)
+		{
+			REG[dstReg] = exp(srcVal);
+#ifdef SHOWEXEC
+			cout << "Exp ";
+#endif
+		}
+		else if(op == opCond)
+		{
+			if(REG[dstReg] < srcVal)
+				REG[dstReg] = -REG[dstReg];
+#ifdef SHOWEXEC
+			cout << "Cond ";
+#endif
+		}
+		else
+		{
+			// die(__FILE__, __FUNCTION__, __LINE__, "bad operation");
+		}
+
+		if(isfinite(REG[dstReg]) == 0)
+			REG[dstReg] = 0;
+
+#ifdef SHOWEXEC
+		cout << "REG";
+		for(int i = 0; i < REGISTER_SIZE; i++)
+			cout << " " << REG[i];
+		cout << endl;
+#endif
+	}
+
+	return REG[0];
 }
