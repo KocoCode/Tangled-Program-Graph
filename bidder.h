@@ -29,5 +29,8 @@ public:
 
     void printProg();
     inline void clearReg();
-    double bid(vector<double> feature);
+    double bid(const vector<double> &feature);
+    inline void incRefCount();
+    inline void decRefCount();
+    bool mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize);
 };

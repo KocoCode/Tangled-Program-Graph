@@ -7,6 +7,7 @@
 
 using std::reverse;
 using std::fill;
+using std::iter_swap;
 using std::cos;
 using std::log;
 using std::fabs;
@@ -70,37 +71,37 @@ void Bidder::markIntrons() {
 
 Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize):
     action(action), ancestralGenTime(genTime), genTime(genTime), featureDimension(featureDimension) {
-	id = nextId++;
-	refCount = 0;
-    REG = vector<double>(REGISTER_SIZE, 0);
-
-	int progSize = 1 + ((int) (drand48() * maxProgSize));
-
-	for(int i = 0; i < progSize; i++) {
-        instruction instr;
-
-		for(size_t j = 0; j < instr.size(); j++)
-			if(drand48() < 0.5)
-                instr.flip(j);
-
-		prog.push_back(instr);
-	}
-
-	markIntrons();
-}
-
-Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
-	action = toCopy.action;
-	ancestralGenTime = toCopy.ancestralGenTime;
-	featureDimension = toCopy.featureDimension;
-	id = nextId++;
+    id = nextId++;
     refCount = 0;
     REG = vector<double>(REGISTER_SIZE, 0);
 
-	for(auto instr: toCopy.prog)
-		prog.push_back(instr);
+    int progSize = 1 + ((int) (drand48() * maxProgSize));
 
-	markIntrons();
+    for(int i = 0; i < progSize; i++) {
+        instruction instr;
+
+    for(int j = 0; j < instr.size(); j++)
+        if(drand48() < 0.5)
+        instr.flip(j);
+
+        prog.push_back(instr);
+	}
+
+    markIntrons();
+}
+
+Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
+    action = toCopy.action;
+    ancestralGenTime = toCopy.ancestralGenTime;
+    featureDimension = toCopy.featureDimension;
+    id = nextId++;
+    refCount = 0;
+    REG = vector<double>(REGISTER_SIZE, 0);
+
+    for(auto instr: toCopy.prog)
+        prog.push_back(instr);
+
+    markIntrons();
 }
 
 void Bidder::printProg() {
@@ -118,122 +119,184 @@ void Bidder::clearReg() {
     fill(REG.begin(), REG.end(), 0);
 }
 
-double Bidder::bid(vector<double> feature) {
+double Bidder::bid(const vector<double> &feature) {
 #ifdef SHOWEXEC
-	cout << "FEATURE:";
-	for(int i = 0; i < featureDimension; i++)
-		cout << " " << feature[i];
-	cout << endl << "REG:";
-	for(int i = 0; i < REGISTER_SIZE; i++)
-		cout << " " << REG[i];
-	cout << endl;
+    cout << "FEATURE:";
+    for(int i = 0; i < featureDimension; i++)
+        cout << " " << feature[i];
+    cout << endl << "REG:";
+    for(int i = 0; i < REGISTER_SIZE; i++)
+        cout << " " << REG[i];
+    cout << endl;
 #endif
 
-	for(int i = 0; i < prog.size(); i++) {
-		if(isIntron[i]) // Skip introns
-			continue;
+    for(int i = 0; i < prog.size(); i++) {
+        if(isIntron[i]) // Skip introns
+            continue;
         instruction instr = prog[i];
 
-		instruction mode = (instr & modeMask) >> modeShift;
-		instruction op = (instr & opMask) >> opShift;
+        instruction mode = (instr & modeMask) >> modeShift;
+        instruction op = (instr & opMask) >> opShift;
 
-		// Should be between 0 and REGISTER_SIZE - 1
+        // Should be between 0 and REGISTER_SIZE - 1
 
-		int dstReg = ((instr & dstMask) >> dstShift).to_ulong();
+        int dstReg = ((instr & dstMask) >> dstShift).to_ulong();
 
 #ifdef SHOWEXEC
-		cout << i << ": " << instr << endl;
+        cout << i << ": " << instr << endl;
         cout << "R[" << dstReg << "] <- R[" << dstReg << "] ";
 #endif
 
         double srcVal;
         // Rx <- op Rx Ry
-		if(mode == mode0) {
-			srcVal = REG[((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE];
+        if(mode == mode0) {
+            srcVal = REG[((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE];
 #ifdef SHOWEXEC
-			cout << "R[" << ((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE << "] ";
+            cout << "R[" << ((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE << "] ";
 #endif
-		}
+        }
         // Rx <- op Rx Iy
-		else {
-			srcVal = feature[((instr & srcMask) >> srcShift).to_ulong() % featureDimension];
+        else {
+            srcVal = feature[((instr & srcMask) >> srcShift).to_ulong() % featureDimension];
 #ifdef SHOWEXEC
-			cout << "I[" << ((instr & srcMask) >> srcShift).to_ulong() % featureDimension << "] ";
+            cout << "I[" << ((instr & srcMask) >> srcShift).to_ulong() % featureDimension << "] ";
 #endif
-		}
+        }
 
-		if(op == opSum)
-		{
-			REG[dstReg] = REG[dstReg] + srcVal;
+        if(op == opSum)
+        {
+            REG[dstReg] = REG[dstReg] + srcVal;
 #ifdef SHOWEXEC
-			cout << "Sum ";
+            cout << "Sum ";
 #endif
-		}
-		else if(op == opDiff)
-		{
-			REG[dstReg] = REG[dstReg] - srcVal;
+        }
+        else if(op == opDiff)
+        {
+            REG[dstReg] = REG[dstReg] - srcVal;
 #ifdef SHOWEXEC
-			cout << "Diff ";
+            cout << "Diff ";
 #endif
-		}
-		else if(op == opProd)
-		{
-			REG[dstReg] = REG[dstReg] * srcVal;
+        }
+        else if(op == opProd)
+        {
+            REG[dstReg] = REG[dstReg] * srcVal;
 #ifdef SHOWEXEC
-			cout << "Prod ";
+            cout << "Prod ";
 #endif
-		}
-		else if(op == opDiv)
-		{
-			REG[dstReg] = REG[dstReg] / srcVal;
+        }
+        else if(op == opDiv)
+        {
+            REG[dstReg] = REG[dstReg] / srcVal;
 #ifdef SHOWEXEC
-			cout << "Div ";
+            cout << "Div ";
 #endif
-		}
-		else if(op == opCos)
-		{
-			REG[dstReg] = cos(srcVal);
+        }
+        else if(op == opCos)
+        {
+            REG[dstReg] = cos(srcVal);
 #ifdef SHOWEXEC
-			cout << "Cos ";
+            cout << "Cos ";
 #endif
-		}
-		else if(op == opLog)
-		{
-			REG[dstReg] = log(fabs(srcVal));
+        }
+        else if(op == opLog)
+        {
+            REG[dstReg] = log(fabs(srcVal));
 #ifdef SHOWEXEC
-			cout << "Log ";
+            cout << "Log ";
 #endif
-		}
-		else if(op == opExp)
-		{
-			REG[dstReg] = exp(srcVal);
+        }
+        else if(op == opExp)
+        {
+            REG[dstReg] = exp(srcVal);
 #ifdef SHOWEXEC
-			cout << "Exp ";
+            cout << "Exp ";
 #endif
-		}
-		else if(op == opCond)
-		{
-			if(REG[dstReg] < srcVal)
-				REG[dstReg] = -REG[dstReg];
+        }
+        else if(op == opCond)
+        {
+            if(REG[dstReg] < srcVal)
+                REG[dstReg] = -REG[dstReg];
 #ifdef SHOWEXEC
-			cout << "Cond ";
+            cout << "Cond ";
 #endif
-		}
-		else
-		{
-			// die(__FILE__, __FUNCTION__, __LINE__, "bad operation");
-		}
+        }
+        else
+        {
+            // die(__FILE__, __FUNCTION__, __LINE__, "bad operation");
+        }
 
-		if(isfinite(REG[dstReg]) == 0)
-			REG[dstReg] = 0;
+        if(isfinite(REG[dstReg]) == 0)
+            REG[dstReg] = 0;
 
 #ifdef SHOWEXEC
-		cout << "REG";
-		for(int i = 0; i < REGISTER_SIZE; i++)
-			cout << " " << REG[i];
-		cout << endl;
+        cout << "REG";
+        for(int i = 0; i < REGISTER_SIZE; i++)
+            cout << " " << REG[i];
+        cout << endl;
 #endif
 	}
 
-	return REG[0];
+    return REG[0];
+}
+
+void Bidder::incRefCount() {
+    refCount++;
+}
+
+void Bidder::decRefCount() {
+    refCount--;
+}
+
+bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize) {
+    bool changed = false;
+
+    // Remove random instruction
+    if(prog.size() > 1 && drand48() < pDelete) {
+        int i = (int) (drand48() * prog.size());
+        prog.erase(prog.begin() + i);
+
+        changed = true;
+    }
+
+    // Insert random instruction
+    if(prog.size() < maxProgSize && drand48() < pAdd) {
+        instruction instr;
+
+        for(int j = 0; j < instr.size(); j++)
+            if(drand48() < 0.5) instr.flip(j);
+
+        int i = (int) (drand48() * (prog.size() + 1));
+
+        prog.insert(prog.begin() + i, instr);
+
+        changed = true;
+    }
+
+    // Swap positions of two instructions
+    if(prog.size() > 1 && drand48() < pSwap) {
+        int i = (int) (drand48() * prog.size());
+        int j;
+        do {
+            j = (int) (drand48() * prog.size());
+        } while(i == j);
+
+        iter_swap(prog.begin()+i, prog.begin()+j);
+
+        changed = true;
+    }
+
+    // Flip single bit of random instruction
+    if(drand48() < pMutate) {
+        int i = (int) (drand48() * prog.size());
+        int j = (int) (drand48() * prog[0].size());
+
+        prog[i].flip(j);
+
+        changed = true;
+    }
+
+    if(changed)
+        markIntrons();
+
+    return changed;
 }
