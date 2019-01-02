@@ -54,7 +54,7 @@ public:
         pool[count++] = item;
     }
 
-    pair<long long, T> random() {
+    pair<long long, T&> random() {
         long long id = rs.random();
         return {id, pool[id]};
     }
