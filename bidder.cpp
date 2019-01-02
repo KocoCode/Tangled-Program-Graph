@@ -7,6 +7,7 @@
 
 using std::reverse;
 using std::fill;
+using std::iter_swap;
 using std::cos;
 using std::log;
 using std::fabs;
@@ -79,7 +80,7 @@ Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize
 	for(int i = 0; i < progSize; i++) {
         instruction instr;
 
-		for(size_t j = 0; j < instr.size(); j++)
+		for(int j = 0; j < instr.size(); j++)
 			if(drand48() < 0.5)
                 instr.flip(j);
 
@@ -236,4 +237,66 @@ double Bidder::bid(vector<double> feature) {
 	}
 
 	return REG[0];
+}
+
+void Bidder::incRefCount() {
+    refCount++;
+}
+
+void Bidder::decRefCount() {
+    refCount--;
+}
+
+bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize) {
+	bool changed = false;
+
+	// Remove random instruction
+	if(prog.size() > 1 && drand48() < pDelete) {
+		int i = (int) (drand48() * prog.size());
+		prog.erase(prog.begin() + i);
+
+		changed = true;
+	}
+
+	// Insert random instruction
+	if(prog.size() < maxProgSize && drand48() < pAdd) {
+		instruction instr;
+
+		for(int j = 0; j < instr.size(); j++)
+			if(drand48() < 0.5) instr.flip(j);
+
+		int i = (int) (drand48() * (prog.size() + 1));
+
+		prog.insert(prog.begin() + i, instr);
+
+		changed = true;
+	}
+
+	// Swap positions of two instructions
+	if(prog.size() > 1 && drand48() < pSwap) {
+		int i = (int) (drand48() * prog.size());
+		int j;
+		do {
+			j = (int) (drand48() * prog.size());
+		} while(i == j);
+
+        iter_swap(prog.begin()+i, prog.begin()+j);
+
+		changed = true;
+	}
+
+	// Flip single bit of random instruction
+	if(drand48() < pMutate) {
+		int i = (int) (drand48() * prog.size());
+		int j = (int) (drand48() * prog[0].size());
+
+		prog[i].flip(j);
+
+		changed = true;
+	}
+
+	if(changed)
+		markIntrons();
+
+	return changed;
 }
