@@ -41,19 +41,26 @@ class Pool {
 private:
     RandomizedSet rs;
     long long count = 0;
+    unordered_map<long long, T> pool;
     vector<long long> gc;
 
 public:
-    unordered_map<long long, T> pool;
-    T create() {
+    long long size() {
+        return pool.size();
+    }
+
+    void insert(T item) {
         rs.insert(count);
-        pool[count];
-        return count++;
+        pool[count++] = item;
     }
 
     pair<long long, T> random() {
         long long id = rs.random();
         return {id, pool[id]};
+    }
+
+    T get(long long id) {
+        return pool[id];
     }
 
     void remove(long long id) {
