@@ -80,15 +80,9 @@ Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize
     for(int i = 0; i < progSize; i++) {
         instruction instr;
 
-<<<<<<< HEAD
-    for(int j = 0; j < instr.size(); j++)
-        if(drand48() < 0.5)
-        instr.flip(j);
-=======
-		for(int j = 0; j < instr.size(); j++)
-			if(drand48() < 0.5)
+        for(int j = 0; j < instr.size(); j++)
+            if(drand48() < 0.5)
                 instr.flip(j);
->>>>>>> 3c9591739bf495b19c8cc1726d7fe0792ecd1061
 
         prog.push_back(instr);
 	}
@@ -249,19 +243,11 @@ void Bidder::incRefCount() {
     refCount++;
 }
 
-<<<<<<< HEAD
-=======
-void Bidder::incRefCount() {
-    refCount++;
-}
-
->>>>>>> 3c9591739bf495b19c8cc1726d7fe0792ecd1061
 void Bidder::decRefCount() {
     refCount--;
 }
 
 bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize) {
-<<<<<<< HEAD
     bool changed = false;
 
     // Remove random instruction
@@ -313,57 +299,4 @@ bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutat
         markIntrons();
 
     return changed;
-=======
-	bool changed = false;
-
-	// Remove random instruction
-	if(prog.size() > 1 && drand48() < pDelete) {
-		int i = (int) (drand48() * prog.size());
-		prog.erase(prog.begin() + i);
-
-		changed = true;
-	}
-
-	// Insert random instruction
-	if(prog.size() < maxProgSize && drand48() < pAdd) {
-		instruction instr;
-
-		for(int j = 0; j < instr.size(); j++)
-			if(drand48() < 0.5) instr.flip(j);
-
-		int i = (int) (drand48() * (prog.size() + 1));
-
-		prog.insert(prog.begin() + i, instr);
-
-		changed = true;
-	}
-
-	// Swap positions of two instructions
-	if(prog.size() > 1 && drand48() < pSwap) {
-		int i = (int) (drand48() * prog.size());
-		int j;
-		do {
-			j = (int) (drand48() * prog.size());
-		} while(i == j);
-
-        iter_swap(prog.begin()+i, prog.begin()+j);
-
-		changed = true;
-	}
-
-	// Flip single bit of random instruction
-	if(drand48() < pMutate) {
-		int i = (int) (drand48() * prog.size());
-		int j = (int) (drand48() * prog[0].size());
-
-		prog[i].flip(j);
-
-		changed = true;
-	}
-
-	if(changed)
-		markIntrons();
-
-	return changed;
->>>>>>> 3c9591739bf495b19c8cc1726d7fe0792ecd1061
 }
