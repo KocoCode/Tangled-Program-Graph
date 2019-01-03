@@ -29,10 +29,11 @@ public:
     Bidder(const Bidder &toCopy, long genTime);
 
     void printProg();
-    inline long getId();
-    inline void clearReg();
+    long getId();
+    void setId(long id);
+    void clearReg();
     double bid(const vector<double> &feature);
-    inline void incRefCount();
-    inline void decRefCount();
+    void incRefCount();
+    void decRefCount();
     bool mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize);
 };
