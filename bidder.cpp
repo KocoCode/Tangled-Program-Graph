@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "bidder.h"
+#include "tpgdata.h"
 
 #define SHOWEXEC
 
@@ -15,8 +16,6 @@ using std::exp;
 using std::isfinite;
 using std::cout;
 using std::endl;
-
-long Bidder::nextId = 0;
 
 void Bidder::markIntrons() {
     /*
@@ -71,7 +70,6 @@ void Bidder::markIntrons() {
 
 Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize):
     action(action), ancestralGenTime(genTime), genTime(genTime), featureDimension(featureDimension) {
-    id = nextId++;
     refCount = 0;
     REG = vector<double>(REGISTER_SIZE, 0);
 
@@ -88,13 +86,13 @@ Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize
 	}
 
     markIntrons();
+    TPGData::GetInstance().bidderPool.insert(*this);
 }
 
 Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
     action = toCopy.action;
     ancestralGenTime = toCopy.ancestralGenTime;
     featureDimension = toCopy.featureDimension;
-    id = nextId++;
     refCount = 0;
     REG = vector<double>(REGISTER_SIZE, 0);
 
@@ -102,6 +100,7 @@ Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
         prog.push_back(instr);
 
     markIntrons();
+    TPGData::GetInstance().bidderPool.insert(*this);
 }
 
 void Bidder::printProg() {

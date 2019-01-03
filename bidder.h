@@ -16,7 +16,6 @@ private:
     unordered_set<long long> effFeatures;
     long genTime;
     long id;
-    static long nextId;
     vector <bool> isIntron;
     int refCount;
     vector <double> profile;

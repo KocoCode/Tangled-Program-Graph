@@ -50,8 +50,9 @@ public:
         return pool.size();
     }
 
-    void insert(const T& val) {
+    void insert(T& val) {
         rs.insert(count);
+        val.setId(count);
         pool.insert({count, val});
         count++;
     }
