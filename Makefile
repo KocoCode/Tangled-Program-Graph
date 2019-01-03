@@ -1,5 +1,6 @@
-FLAGS = -std=c++11
+FLAGS = -std=c++17
 all: team_test
+test: bidder_test team_test
 
 bidder_test: bidder_test.o bidder.o instruction.o
 	g++ $(FLAGS) -o $@ $^

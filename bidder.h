@@ -24,6 +24,7 @@ private:
 public:
     vector<double> REG;
 
+    Bidder() {}
     Bidder(long action, long genTime, long featureDimension, int maxProgSize);
     Bidder(const Bidder &toCopy, long genTime);
 

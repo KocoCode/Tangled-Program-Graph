@@ -19,10 +19,10 @@ using std::endl;
 
 void Bidder::markIntrons() {
     /*
-    Mark introns in prog
-    Count effProgSize
-    Set effFeatures
-    */
+       Mark introns in prog
+       Count effProgSize
+       Set effFeatures
+     */
     bitset <REGISTER_SIZE> isEffReg;
 
     isIntron.clear();
@@ -49,7 +49,7 @@ void Bidder::markIntrons() {
 
             instruction mode = (*it & modeMask) >> modeShift;
 
-             // Rx <- op Rx Ry; Ry is effective
+            // Rx <- op Rx Ry; Ry is effective
             if(mode == mode0) {
                 int reg = ((*it & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE;
                 isEffReg.set(reg, true);
@@ -83,7 +83,7 @@ Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize
                 instr.flip(j);
 
         prog.push_back(instr);
-	}
+    }
 
     markIntrons();
     TPGData::GetInstance().bidderPool.insert(*this);
@@ -241,7 +241,7 @@ double Bidder::bid(const vector<double> &feature) {
             cout << " " << REG[i];
         cout << endl;
 #endif
-	}
+    }
 
     return REG[0];
 }

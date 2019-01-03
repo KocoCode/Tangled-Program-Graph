@@ -24,10 +24,10 @@ void printInstr(instruction instr) {
         cout << "Exp ";
     else
         cout << "Cond ";
-    
+
     if (op != opCos && op != opLog && op != opExp)
         cout << "R[" << dstReg << "] ";
-    
+
     instruction mode = (instr & modeMask) >> modeShift;
     if (mode == mode0)
         cout << "R[" << ((instr & srcMask) >> srcShift).to_ulong() % REGISTER_SIZE << "]" << endl;

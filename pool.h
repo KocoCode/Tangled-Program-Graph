@@ -59,11 +59,11 @@ public:
 
     pair<long long, T&> random() {
         long long id = rs.random();
-        return {id, pool.at(id)};
+        return {id, pool[id]};
     }
 
     T& get(long long id) {
-        return pool.at(id);
+        return pool[id];
     }
 
     void remove(long long id) {
