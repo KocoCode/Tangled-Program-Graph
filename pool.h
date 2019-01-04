@@ -5,6 +5,7 @@
 #include <utility>
 
 using std::default_random_engine;
+using std::forward;
 using std::pair;
 using std::swap;
 using std::vector;
@@ -13,68 +14,133 @@ using std::unordered_map;
 
 class RandomizedSet {
 private:
-    vector<long long> v;
-    unordered_map<long long, long long> m;
+    vector<int> v;
+    unordered_map<int, int> m;
     default_random_engine gen;
-    uniform_int_distribution<long long> uniform;
+    uniform_int_distribution<int> uniform;
 
 public:
-    void insert(long long val) {
+    void insert(int val) {
+        if (m.count(val)) return;
         m[val] = v.size();
         v.push_back(val);
     }
 
-    void remove(long long val) {
-        long long back = v.back();
+    void remove(int val) {
+        if (m.count(val) == 0) return;
+        int back = v.back();
         swap(v[m[val]], v.back());
         m[back] = m[val];
         m.erase(val);
         v.pop_back();
     }
 
-    long long random() {
+    int random() {
         return v[uniform(gen, decltype(uniform)::param_type(0, v.size() - 1))];
+    }
+
+    int size() {
+        return m.size();
     }
 };
 
 template <class T>
-class Pool {
+class BidderPool {
 private:
     RandomizedSet rs;
-    long long count = 0;
-    unordered_map<long long, T> pool;
-    vector<long long> gc;
+    int count = 0;
+    unordered_map<int, T> pool;
 
 public:
-    long long size() {
+    int size() {
         return pool.size();
     }
 
-    void insert(T& val) {
+    template <class T_ = T>
+    void insert(T_&& val) {
         rs.insert(count);
         val.setId(count);
-        pool.insert({count, val});
+        pool.insert({count, forward<T_>(val)});
         count++;
     }
 
-    pair<long long, T&> random() {
-        long long id = rs.random();
+    pair<int, T&> random() {
+        int id = rs.random();
         return {id, pool[id]};
     }
 
-    T& get(long long id) {
+    T& get(int id) {
         return pool[id];
     }
 
-    void remove(long long id) {
-        gc.push_back(id);
-        rs.remove(id);
-    }
-
-    void maintain() {
+    void cleanup() {
+        vector<int> gc;
+        for (auto& p : pool) {
+            if (p.second.getRefCount() == 0) {
+                gc.push_back(p.first);
+            }
+        }
         for (auto id : gc) {
+            rs.remove(id);
             pool.erase(id);
         }
-        gc.clear();
+    }
+};
+
+template <class T>
+class TeamPool {
+private:
+    RandomizedSet rs, root_rs;
+    int count = 0;
+    unordered_map<int, T> pool;
+
+public:
+    int size() {
+        return pool.size();
+    }
+
+    int rootSize() {
+        return root_rs.size();
+    }
+
+    template <class T_ = T>
+    void insert(T_&& val) {
+        if (val.isRoot()) {
+            root_rs.insert(count);
+        }
+        rs.insert(count);
+        val.setId(count);
+        pool.insert({count, forward<T_>(val)});
+        count++;
+    }
+
+    pair<int, T&> random() {
+        int id = rs.random();
+        return {id, pool[id]};
+    }
+
+    pair<int, T&> randomRootTeam() {
+        int id = root_rs.random();
+        return {id, pool[id]};
+    }
+
+    T& get(int id) {
+        return pool[id];
+    }
+
+    void remove(int id) {
+        rs.remove(id);
+        root_rs.remove(id);
+        pool.erase(id);
+    }
+
+    void addRootTeam(int id) {
+        pool[id].setRoot(true);
+        root_rs.insert(id);
+    }
+
+    void removeRootTeam(int id) {
+        pool[id].setRoot(false);
+        root_rs.remove(id);
     }
 };
