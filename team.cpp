@@ -6,6 +6,7 @@ using std::max_element;
 
 void Team::addBidder(long id) {
     memberBidders.insert(id);
+    TPGData::GetInstance().bidderPool.get(id).incRefCount();
 }
 
 void Team::clearReg() {
