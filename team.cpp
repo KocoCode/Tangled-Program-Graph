@@ -53,6 +53,7 @@ struct BidderIdLookUpCompare {
 
 int Team::getAction(const vector<double> &state) {
     TPGData& tpgData = TPGData::GetInstance();
+    clearReg();
     for (auto &bidderId: memberBidders) {
         Bidder& bidder = tpgData.bidderPool.get(bidderId);
         bidder.setBidVal(bidder.bid(state));
@@ -65,5 +66,5 @@ int Team::getAction(const vector<double> &state) {
         return action;
 
     // action is a teamId
-    // return tpgData.teamPool.get(action).getAction();
+    return tpgData.teamPool.get(action).getAction(state);
 }
