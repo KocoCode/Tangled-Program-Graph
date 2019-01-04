@@ -68,8 +68,8 @@ void Bidder::markIntrons() {
     reverse(isIntron.begin(), isIntron.end());
 }
 
-Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize):
-    action(action), ancestralGenTime(genTime), genTime(genTime), featureDimension(featureDimension) {
+Bidder::Bidder(long action, long featureDimension, int maxProgSize, long genTime):
+    action(action), featureDimension(featureDimension), ancestralGenTime(genTime), genTime(genTime) {
     refCount = 0;
     REG = vector<double>(REGISTER_SIZE, 0);
 
@@ -86,7 +86,6 @@ Bidder::Bidder(long action, long genTime, long featureDimension, int maxProgSize
     }
 
     markIntrons();
-    TPGData::GetInstance().bidderPool.insert(*this);
 }
 
 Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
@@ -100,7 +99,18 @@ Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
         prog.push_back(instr);
 
     markIntrons();
-    TPGData::GetInstance().bidderPool.insert(*this);
+}
+
+Bidder& Bidder::CreateBidder(long action, long featureDimension, int maxProgSize, long genTime) {
+    Bidder bidder(action, featureDimension, maxProgSize, genTime);
+    TPGData::GetInstance().bidderPool.insert(bidder);
+    return TPGData::GetInstance().bidderPool.get(bidder.getId());
+}
+
+Bidder& Bidder::CreateBidder(const Bidder &toCopy, long genTime) {
+    Bidder bidder(toCopy, genTime);
+    TPGData::GetInstance().bidderPool.insert(bidder);
+    return TPGData::GetInstance().bidderPool.get(bidder.getId());
 }
 
 void Bidder::printProg() {

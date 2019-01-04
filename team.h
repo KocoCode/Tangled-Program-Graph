@@ -12,6 +12,12 @@ private:
     unordered_set<long> memberBidders;
     unordered_set<long> activeBidders;
 public:
+    static Team& CreateTeam();
+
+    Team() {};
+
+    long getId();
+    void setId(long id);
     void addBidder(long id);
     void clearReg();
     int getAction(const vector<double> &state);

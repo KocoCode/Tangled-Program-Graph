@@ -1,6 +1,7 @@
 #pragma once
 #include "pool.h"
 #include "bidder.h"
+#include "team.h"
 
 class TPGData {
 private:
@@ -16,4 +17,5 @@ public:
     }
 
     Pool<Bidder> bidderPool;
+    Pool<Team> teamPool;
 };

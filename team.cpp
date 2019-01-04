@@ -4,6 +4,20 @@
 
 using std::max_element;
 
+Team& Team::CreateTeam() {
+    Team team;
+    TPGData::GetInstance().teamPool.insert(team);
+    return TPGData::GetInstance().teamPool.get(team.getId());
+}
+
+long Team::getId() {
+    return id;
+}
+
+void Team::setId(long id) {
+    this->id = id;
+}
+
 void Team::addBidder(long id) {
     memberBidders.insert(id);
     TPGData::GetInstance().bidderPool.get(id).incRefCount();
