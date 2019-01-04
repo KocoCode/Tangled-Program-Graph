@@ -39,6 +39,10 @@ public:
     long long random() {
         return v[uniform(gen, decltype(uniform)::param_type(0, v.size() - 1))];
     }
+
+    int size() {
+        return m.size();
+    }
 };
 
 template<class, class=void>
@@ -69,6 +73,11 @@ private:
 public:
     long long size() {
         return pool.size();
+    }
+
+    template <class T_ = T>
+    std::enable_if_t<is_isRoot_defined<T_>::value, long long> rootTeamSize() {
+        return root_rs.size();
     }
 
     template <class T_>
