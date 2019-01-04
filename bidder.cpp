@@ -122,6 +122,14 @@ void Bidder::setId(long id) {
     this->id = id;
 }
 
+int Bidder::getAction() {
+    return action;
+}
+
+void Bidder::setBidVal(double bidVal) {
+    this->bidVal = bidVal;
+}
+
 void Bidder::clearReg() {
     fill(REG.begin(), REG.end(), 0);
 }
@@ -308,4 +316,20 @@ bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutat
         markIntrons();
 
     return changed;
+}
+
+bool operator<(const Bidder &lhs, const Bidder &rhs) {
+    if (lhs.bidVal != rhs.bidVal)
+        return lhs.bidVal < rhs.bidVal;
+    if (lhs.effProgSize != rhs.effProgSize)
+        return lhs.effProgSize > rhs.effProgSize;
+    if (lhs.refCount != rhs.refCount)
+        return lhs.refCount > rhs.refCount;
+    if (lhs.effFeatures.size() != rhs.effFeatures.size())
+        return lhs.effFeatures.size() > rhs.effFeatures.size();
+    if (lhs.genTime != rhs.genTime)
+        return lhs.genTime < rhs.genTime;
+    if (lhs.ancestralGenTime != rhs.ancestralGenTime)
+        return lhs.ancestralGenTime < rhs.ancestralGenTime;
+    return lhs.id > rhs.id; // ensure deterministic comparison
 }

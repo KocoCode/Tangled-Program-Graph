@@ -9,8 +9,8 @@ using namespace std;
 int main() {
     Team team;
     srand48(3);
-    Bidder bidder1(0, 0, 20, 20); // action, genTime, featureDimension, maxProgSize
-    Bidder bidder2(0, 0, 20, 20); // action, genTime, featureDimension, maxProgSize
+    Bidder bidder1(-1, 0, 20, 20); // action, genTime, featureDimension, maxProgSize
+    Bidder bidder2(-2, 0, 20, 20); // action, genTime, featureDimension, maxProgSize
     team.addBidder(bidder1.getId());
     team.addBidder(bidder2.getId());
 
@@ -33,5 +33,9 @@ int main() {
     team.clearReg();
     cout << bb1.bid(feature) << endl;
     cout << bb2.bid(feature) << endl;
+
+    cout << endl << "Test getAction()" << endl;
+    team.clearReg();
+    cout << team.getAction(feature) << endl;
     return 0;
 }

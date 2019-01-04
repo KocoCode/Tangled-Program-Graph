@@ -19,6 +19,7 @@ private:
     vector <bool> isIntron;
     int refCount;
     vector <double> profile;
+    double bidVal;
 
     void markIntrons();
 public:
@@ -31,9 +32,13 @@ public:
     void printProg();
     long getId();
     void setId(long id);
+    int getAction();
+    void setBidVal(double bidVal);
     void clearReg();
     double bid(const vector<double> &feature);
     void incRefCount();
     void decRefCount();
     bool mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize);
+
+    friend bool operator<(const Bidder &lhs, const Bidder &rhs);
 };
