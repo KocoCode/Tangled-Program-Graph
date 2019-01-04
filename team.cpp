@@ -4,10 +4,14 @@
 
 using std::max_element;
 
-Team& Team::CreateTeam() {
-    Team team;
+Team& Team::CreateTeam(long genTime) {
+    Team team(genTime);
     TPGData::GetInstance().teamPool.insert(team);
     return TPGData::GetInstance().teamPool.get(team.getId());
+}
+
+Team::Team(long genTime): genTime(genTime) {
+    isRootTeam = true;
 }
 
 long Team::getId() {
@@ -16,6 +20,14 @@ long Team::getId() {
 
 void Team::setId(long id) {
     this->id = id;
+}
+
+bool Team::isRoot() {
+    return isRootTeam;
+}
+
+void Team::setRoot(bool isRootTeam) {
+    this->isRootTeam = isRootTeam;
 }
 
 void Team::addBidder(long id) {

@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     TPGData& tpgData = TPGData::GetInstance();
 
-    Team& team = Team::CreateTeam();
+    Team& team = Team::CreateTeam(0); // genTime
     srand48(3);
     Bidder& bidder1 = Bidder::CreateBidder(-1, 20, 20, 0); // action, featureDimension, maxProgSize, genTime
     Bidder& bidder2 = Bidder::CreateBidder(-2, 20, 20, 0);
