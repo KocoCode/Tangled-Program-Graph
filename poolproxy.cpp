@@ -82,8 +82,8 @@ void PoolProxy::bidderCleanup() {
         }
     }
     for (auto id : gc) {
-        for (int i = 0; i < behaviourStates.size(); ++i) {
-            auto it = profiles[i].find(bidderPool.get(id).bid(behaviourStates[i]));
+        for (int i = 0; i < behaviouralStates.size(); ++i) {
+            auto it = profiles[i].find(bidderPool.get(id).bid(behaviouralStates[i]));
             profiles[i].erase(it);
         }
         bidderRemove(id);
@@ -146,11 +146,12 @@ int PoolProxy::numAtomic(int teamId) {
     return atomicActions.size();
 }
 
-void teamPendAddRoot(int teamId) {
+void PoolProxy::teamPendAddRoot(int teamId) {
     addPendingRootTeam.insert(teamId);
     removePendingRootTeam.erase(teamId);
 }
 
-void teamPendRemoveRoot(int teamId);
+void PoolProxy::teamPendRemoveRoot(int teamId) {
     addPendingRootTeam.erase(teamId);
     removePendingRootTeam.insert(teamId);
+}

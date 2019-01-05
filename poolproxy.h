@@ -50,5 +50,9 @@ public:
     void teamRootMaintain();
     void teamAddBidder(int teamId, int bidderId);
     void teamRemoveBidder(int teamId, int bidderId);
+    void teamIncRef(int teamId);
+    void teamDecRef(int teamId);
+    void bidderIncRef(int bidderId);
+    void bidderDecRef(int bidderId);
     int numAtomic(int teamId);
 };

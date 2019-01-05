@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cmath>
 #include "bidder.h"
-#include "tpgdata.h"
 
 #define SHOWEXEC
 
@@ -262,8 +261,6 @@ void Bidder::incRefCount() {
 
 void Bidder::decRefCount() {
     refCount--;
-    if (refCount == 0)
-        TPGData::GetInstance().bidderPool.remove(id);
 }
 
 bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize) {

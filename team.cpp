@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "team.h"
-#include "tpgdata.h"
+#include "poolproxy.h"
 
 using std::max_element;
 
@@ -43,7 +43,7 @@ void Team::addBidder(int id) {
 void Team::removeBidder(int id) {
     memberBidders.erase(id);
 }
-
+/*
 void Team::clearReg() {
     TPGData& tpgData = TPGData::GetInstance();
     for (auto &bidderId: memberBidders) {
@@ -77,3 +77,4 @@ int Team::getAction(const vector<double> &state) {
     // action is a teamId
     return tpgData.teamPool.get(action).getAction(state);
 }
+*/
