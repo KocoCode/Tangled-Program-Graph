@@ -70,8 +70,10 @@ int main() {
         assert(r >= 0 and r < 100);
     }
     assert(bpool.size() == 100);
-    bpool.get(50).setRefCount(1);
-    bpool.cleanup();
+    for (int i = 0; i < 100; ++i) {
+        if (i == 50) continue;
+        bpool.remove(i);
+    }
     for (int i = 0; i < 1000; ++i) {
         int id = bpool.random();
         int r = bpool.get(id).getVal();

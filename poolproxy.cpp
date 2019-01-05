@@ -73,7 +73,19 @@ int PoolProxy::bidderSize() {
 }
 
 void PoolProxy::bidderCleanup() {
-    auto refTeams = bidderPool.cleanup();
+    vector<int> gc, refTeams;
+    for (auto& p : bidderPool) {
+        if (p.second.getRefCount() == 0) {
+            gc.push_back(p.first);
+            int action = p.second.getAction();
+            if (action >= 0) {
+                refTeams.push_back(action);
+            }
+        }
+    }
+    for (auto id : gc) {
+        bidderPool.remove(id);
+    }
     for (auto teamId : refTeams) {
         teamDecRef(teamId);
     }

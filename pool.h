@@ -72,30 +72,17 @@ public:
         return count++;
     }
 
+    void remove(int id) {
+        rs.remove(id);
+        pool.erase(id);
+    }
+
     int random() {
         return rs.random();
     }
 
     T& get(int id) {
         return pool[id];
-    }
-
-    vector<int> cleanup() {
-        vector<int> gc, actions;
-        for (auto& p : pool) {
-            if (p.second.getRefCount() == 0) {
-                gc.push_back(p.first);
-                int action = p.second.getAction();
-                if (action >= 0) {
-                    actions.push_back(action);
-                }
-            }
-        }
-        for (auto id : gc) {
-            rs.remove(id);
-            pool.erase(id);
-        }
-        return actions;
     }
 
     typename unordered_map<int, T>::iterator begin() {
