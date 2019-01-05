@@ -42,6 +42,14 @@ public:
     int size() {
         return m.size();
     }
+
+    vector<int>::iterator begin() const {
+        return v.begin();
+    }
+
+    vector<int>::iterator end() const {
+        return v.end();
+    }
 };
 
 template <class T>
@@ -57,33 +65,45 @@ public:
     }
 
     template <class T_ = T>
-    void insert(T_&& val) {
+    int insert(T_&& val) {
         rs.insert(count);
         val.setId(count);
         pool.insert({count, forward<T_>(val)});
-        count++;
+        return count++;
     }
 
-    pair<int, T&> random() {
-        int id = rs.random();
-        return {id, pool[id]};
+    int random() {
+        return rs.random();
     }
 
     T& get(int id) {
         return pool[id];
     }
 
-    void cleanup() {
-        vector<int> gc;
+    vector<int> cleanup() {
+        vector<int> gc, actions;
         for (auto& p : pool) {
             if (p.second.getRefCount() == 0) {
                 gc.push_back(p.first);
+                int action = p.second.getAction();
+                if (action >= 0) {
+                    actions.push_back(action);
+                }
             }
         }
         for (auto id : gc) {
             rs.remove(id);
             pool.erase(id);
         }
+        return actions;
+    }
+
+    unordered_map<int, T>::iterator begin() const {
+        return pool.begin();
+    }
+
+    unordered_map<int, T>::iterator end() const {
+        return pool.end();
     }
 };
 
@@ -104,24 +124,19 @@ public:
     }
 
     template <class T_ = T>
-    void insert(T_&& val) {
-        if (val.isRoot()) {
-            root_rs.insert(count);
-        }
+    int insert(T_&& val) {
         rs.insert(count);
         val.setId(count);
         pool.insert({count, forward<T_>(val)});
-        count++;
+        return count++;
     }
 
-    pair<int, T&> random() {
-        int id = rs.random();
-        return {id, pool[id]};
+    int random() {
+        return rs.random();
     }
 
-    pair<int, T&> randomRootTeam() {
-        int id = root_rs.random();
-        return {id, pool[id]};
+    int randomRootTeam() {
+        return root_rs.random();
     }
 
     T& get(int id) {
@@ -135,12 +150,10 @@ public:
     }
 
     void addRootTeam(int id) {
-        pool[id].setRoot(true);
         root_rs.insert(id);
     }
 
     void removeRootTeam(int id) {
-        pool[id].setRoot(false);
         root_rs.remove(id);
     }
 };
