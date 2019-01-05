@@ -16,6 +16,6 @@ public:
         return instance;
     }
 
-    Pool<Bidder> bidderPool;
-    Pool<Team> teamPool;
+    BidderPool<Bidder> bidderPool;
+    TeamPool<Team> teamPool;
 };

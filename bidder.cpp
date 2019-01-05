@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "bidder.h"
+#include "team.h"
 #include "tpgdata.h"
 
 #define SHOWEXEC
@@ -70,6 +71,7 @@ void Bidder::markIntrons() {
 
 Bidder::Bidder(long action, long featureDimension, int maxProgSize, long genTime):
     action(action), featureDimension(featureDimension), ancestralGenTime(genTime), genTime(genTime) {
+
     refCount = 0;
     REG = vector<double>(REGISTER_SIZE, 0);
 
@@ -102,15 +104,21 @@ Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
 }
 
 Bidder& Bidder::CreateBidder(long action, long featureDimension, int maxProgSize, long genTime) {
+    TPGData& tpgData = TPGData::GetInstance();
     Bidder bidder(action, featureDimension, maxProgSize, genTime);
-    TPGData::GetInstance().bidderPool.insert(bidder);
-    return TPGData::GetInstance().bidderPool.get(bidder.getId());
+    if (action >= 0)
+        tpgData.teamPool.get(action).incRefCount();
+    tpgData.bidderPool.insert(bidder);
+    return tpgData.bidderPool.get(bidder.getId());
 }
 
 Bidder& Bidder::CreateBidder(const Bidder &toCopy, long genTime) {
+    TPGData& tpgData = TPGData::GetInstance();
     Bidder bidder(toCopy, genTime);
-    TPGData::GetInstance().bidderPool.insert(bidder);
-    return TPGData::GetInstance().bidderPool.get(bidder.getId());
+    if (bidder.getAction() >= 0)
+        tpgData.teamPool.get(bidder.getAction()).incRefCount();
+    tpgData.bidderPool.insert(bidder);
+    return tpgData.bidderPool.get(bidder.getId());
 }
 
 void Bidder::printProg() {
@@ -264,14 +272,16 @@ double Bidder::bid(const vector<double> &feature) {
     return REG[0];
 }
 
+int Bidder::getRefCount() {
+    return refCount;
+}
+
 void Bidder::incRefCount() {
     refCount++;
 }
 
 void Bidder::decRefCount() {
     refCount--;
-    if (refCount == 0)
-        TPGData::GetInstance().bidderPool.remove(id);
 }
 
 bool Bidder::mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize) {

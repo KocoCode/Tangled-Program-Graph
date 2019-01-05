@@ -11,7 +11,7 @@ Team& Team::CreateTeam(long genTime) {
 }
 
 Team::Team(long genTime): genTime(genTime) {
-    isRootTeam = true;
+    refCount = 0;
 }
 
 long Team::getId() {
@@ -23,16 +23,33 @@ void Team::setId(long id) {
 }
 
 bool Team::isRoot() {
-    return isRootTeam;
+    return refCount == 0;
 }
 
-void Team::setRoot(bool isRootTeam) {
-    this->isRootTeam = isRootTeam;
+int Team::getRefCount() {
+    return refCount;
+}
+
+void Team::incRefCount() {
+    if (refCount == 0)
+        TPGData::GetInstance().teamPool.removeRootTeam(id);
+    refCount++;
+}
+
+void Team::decRefCount() {
+    refCount--;
+    if (refCount == 0)
+        TPGData::GetInstance().teamPool.addRootTeam(id);
 }
 
 void Team::addBidder(long id) {
     memberBidders.insert(id);
     TPGData::GetInstance().bidderPool.get(id).incRefCount();
+}
+
+void Team::removeBidder(long id) {
+    memberBidders.erase(id);
+    TPGData::GetInstance().bidderPool.get(id).decRefCount();
 }
 
 void Team::clearReg() {

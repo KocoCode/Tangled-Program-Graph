@@ -135,12 +135,10 @@ public:
     }
 
     void addRootTeam(int id) {
-        pool[id].setRoot(true);
         root_rs.insert(id);
     }
 
     void removeRootTeam(int id) {
-        pool[id].setRoot(false);
         root_rs.remove(id);
     }
 };

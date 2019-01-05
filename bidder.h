@@ -40,6 +40,7 @@ public:
     void setBidVal(double bidVal);
     void clearReg();
     double bid(const vector<double> &feature);
+    int getRefCount();
     void incRefCount();
     void decRefCount();
     bool mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize);

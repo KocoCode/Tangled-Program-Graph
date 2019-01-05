@@ -9,7 +9,7 @@ class Team {
 private:
     long genTime;
     long id;
-    bool isRootTeam;
+    int refCount;
     unordered_set<long> memberBidders;
     unordered_set<long> activeBidders;
 
@@ -22,8 +22,11 @@ public:
     long getId();
     void setId(long id);
     bool isRoot();
-    void setRoot(bool isRootTeam);
+    int getRefCount();
+    void incRefCount();
+    void decRefCount();
     void addBidder(long id);
+    void removeBidder(long id);
     void clearReg();
     int getAction(const vector<double> &state);
 };
