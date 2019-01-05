@@ -33,6 +33,7 @@ public:
     int getId();
     void setId(int id);
     int getAction();
+    void setAction(int action);
     void setBidVal(double bidVal);
     void clearReg();
     double bid(const vector<double> &feature);

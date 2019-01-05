@@ -123,6 +123,10 @@ int Bidder::getAction() {
     return action;
 }
 
+void Bidder::setAction(int action) {
+    this->action = action;
+}
+
 void Bidder::setBidVal(double bidVal) {
     this->bidVal = bidVal;
 }

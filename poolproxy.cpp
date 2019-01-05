@@ -71,14 +71,10 @@ int PoolProxy::bidderSize() {
 }
 
 void PoolProxy::bidderCleanup() {
-    vector<int> gc, refTeams;
+    vector<int> gc;
     for (auto& p : bidderPool) {
         if (p.second.getRefCount() == 0) {
             gc.push_back(p.first);
-            int action = p.second.getAction();
-            if (action >= 0) {
-                refTeams.push_back(action);
-            }
         }
     }
     for (auto id : gc) {
@@ -87,9 +83,6 @@ void PoolProxy::bidderCleanup() {
             profiles[i].erase(it);
         }
         bidderRemove(id);
-    }
-    for (auto teamId : refTeams) {
-        teamDecRef(teamId);
     }
 }
 
@@ -101,6 +94,9 @@ void PoolProxy::teamRootMaintain() {
     for (auto teamId : removePendingRootTeam) {
         teamPool.removeRootTeam(teamId);
     }
+
+    addPendingRootTeam.clear();
+    removePendingRootTeam.clear();
 }
 
 void PoolProxy::teamAddBidder(int teamId, int bidderId) {
@@ -111,6 +107,17 @@ void PoolProxy::teamAddBidder(int teamId, int bidderId) {
 void PoolProxy::teamRemoveBidder(int teamId, int bidderId) {
     teamPool.get(teamId).removeBidder(bidderId);
     bidderDecRef(bidderId);
+}
+
+void PoolProxy::bidderSetAction(int bidderId, int action) {
+    Bidder& bidder = bidderPool.get(bidderId);
+    if (action == bidder.getAction())
+        return;
+    if (bidder.getAction() >= 0)
+        teamDecRef(bidder.getAction());
+    bidder.setAction(action);
+    if (action >= 0)
+        teamIncRef(action);
 }
 
 void PoolProxy::teamIncRef(int teamId) {

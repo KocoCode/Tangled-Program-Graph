@@ -17,6 +17,10 @@ private:
     void teamPendAddRoot(int teamId);
     void teamPendRemoveRoot(int teamId);
     void bidderRemove(int bidderId);
+    void teamIncRef(int teamId);
+    void teamDecRef(int teamId);
+    void bidderIncRef(int bidderId);
+    void bidderDecRef(int bidderId);
 
     unordered_set<int> addPendingRootTeam, removePendingRootTeam;
     deque<vector<double>> behaviouralStates;
@@ -50,9 +54,6 @@ public:
     void teamRootMaintain();
     void teamAddBidder(int teamId, int bidderId);
     void teamRemoveBidder(int teamId, int bidderId);
-    void teamIncRef(int teamId);
-    void teamDecRef(int teamId);
-    void bidderIncRef(int bidderId);
-    void bidderDecRef(int bidderId);
+    void bidderSetAction(int bidderId, int action);
     int numAtomic(int teamId);
 };
