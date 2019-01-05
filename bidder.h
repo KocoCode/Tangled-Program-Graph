@@ -21,17 +21,13 @@ private:
     vector <double> profile;
     double bidVal;
 
-    Bidder(long action, long featureDimension, int maxProgSize, long genTime);
-    Bidder(const Bidder &toCopy, long genTime);
-
     void markIntrons();
 public:
     vector<double> REG;
 
-    static Bidder& CreateBidder(long action, long featureDimension, int maxProgSize, long genTime);
-    static Bidder& CreateBidder(const Bidder &toCopy, long genTime);
-
     Bidder() {}
+    Bidder(long action, long featureDimension, int maxProgSize, long genTime);
+    Bidder(const Bidder &toCopy, long genTime);
 
     void printProg();
     long getId();

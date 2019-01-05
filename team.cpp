@@ -4,12 +4,6 @@
 
 using std::max_element;
 
-Team& Team::CreateTeam(long genTime) {
-    Team team(genTime);
-    TPGData::GetInstance().teamPool.insert(team);
-    return TPGData::GetInstance().teamPool.get(team.getId());
-}
-
 Team::Team(long genTime): genTime(genTime) {
     isRootTeam = true;
 }

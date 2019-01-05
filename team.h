@@ -13,11 +13,9 @@ private:
     unordered_set<long> memberBidders;
     unordered_set<long> activeBidders;
 
-    Team(long genTime);
 public:
-    static Team& CreateTeam(long genTime);
-
     Team() {};
+    Team(long genTime);
 
     long getId();
     void setId(long id);

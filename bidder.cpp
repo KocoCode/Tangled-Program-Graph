@@ -101,18 +101,6 @@ Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
     markIntrons();
 }
 
-Bidder& Bidder::CreateBidder(long action, long featureDimension, int maxProgSize, long genTime) {
-    Bidder bidder(action, featureDimension, maxProgSize, genTime);
-    TPGData::GetInstance().bidderPool.insert(bidder);
-    return TPGData::GetInstance().bidderPool.get(bidder.getId());
-}
-
-Bidder& Bidder::CreateBidder(const Bidder &toCopy, long genTime) {
-    Bidder bidder(toCopy, genTime);
-    TPGData::GetInstance().bidderPool.insert(bidder);
-    return TPGData::GetInstance().bidderPool.get(bidder.getId());
-}
-
 void Bidder::printProg() {
     int count = 0;
     cout << "Generation Time: " << genTime << endl;
