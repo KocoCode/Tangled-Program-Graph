@@ -43,11 +43,11 @@ public:
         return m.size();
     }
 
-    vector<int>::iterator begin() const {
+    vector<int>::iterator begin() {
         return v.begin();
     }
 
-    vector<int>::iterator end() const {
+    vector<int>::iterator end() {
         return v.end();
     }
 };
@@ -98,11 +98,11 @@ public:
         return actions;
     }
 
-    unordered_map<int, T>::iterator begin() const {
+    typename unordered_map<int, T>::iterator begin() {
         return pool.begin();
     }
 
-    unordered_map<int, T>::iterator end() const {
+    typename unordered_map<int, T>::iterator end() {
         return pool.end();
     }
 };
