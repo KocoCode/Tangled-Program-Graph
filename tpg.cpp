@@ -83,13 +83,13 @@ void TPG::genTeams(int genTime, int parentId) {
 
                 if (drand48() < pmn) {
                     if (genTime == 1 or (poolProxy.bidderGet(bidderId).getAction() < 0 and (poolProxy.numAtomic(childId) < 2 ? true : drand48() < pAtomic))) {
-                        poolProxy.bidderGet(newBidderId).setAction(-1 - (int)(drand48() * numAtomicActions));
+                        poolProxy.setAction(newBidderId, -1 - (int)(drand48() * numAtomicActions));
                     } else {
                         int id;
                         do {
                             id = poolProxy.teamRandom();
                         } while (id == childId or poolProxy.teamGet(id).genTime() == genTime);
-                        poolProxy.bidderGet(newBidderId).setAction(id);
+                        poolProxy.setAction(newBidderId, id);
                     }
                 }
             }
