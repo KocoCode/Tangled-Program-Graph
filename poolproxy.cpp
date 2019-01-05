@@ -140,7 +140,12 @@ void PoolProxy::bidderDecRef(int bidderId) {
 }
 
 int PoolProxy::numAtomic(int teamId) {
-    return teamPool.get(teamId).numAtomic();
+    unordered_set<int> atomicActions;
+    for (auto bidderId : teamPool.get(teamId).getBidders()) {
+        int action = bidderPool.get(bidderId).getAction();
+        if (action < 0) atomicActions.insert(action);
+    }
+    return atomicActions.size();
 }
 
 void teamPendAddRoot(int teamId) {
