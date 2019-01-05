@@ -1,6 +1,7 @@
 FLAGS = -std=c++17 -O3 -Wall -Wextra -Wshadow -pedantic
+TESTS = bidder_test team_test pool_test poolproxy_test
 all: team_test
-test: bidder_test team_test pool_test poolproxy_test
+test: $(TESTS)
 
 bidder_test: bidder_test.o bidder.o instruction.o
 	g++ $(FLAGS) -o $@ $^
@@ -18,4 +19,4 @@ poolproxy_test: poolproxy_test.o poolproxy.o team.o bidder.o instruction.o
 	g++ $(FLAGS) -c $^
 
 clean:
-	rm -f team_test bidder_test *.o
+	rm -f $(TESTS) *.o
