@@ -3,18 +3,24 @@
 #include "bidder.h"
 #include "team.h"
 
+#include <deque>
+#include <set>
+#include <unordered_set>
+
+using std::deque;
+using std::multiset;
+using std::unordered_set;
+
 class PoolProxy {
 private:
     PoolProxy() {}
-    void teamIncRef(int);
-    void teamDecRef(int);
-    void bidderIncRef(int);
-    void bidderDecRef(int);
-    void teamPendAddRoot(int);
-    void teamPendRemoveRoot(int);
+    void teamPendAddRoot(int teamId);
+    void teamPendRemoveRoot(int teamId);
     void bidderRemove(int bidderId);
 
     unordered_set<int> addPendingRootTeam, removePendingRootTeam;
+    deque<vector<double>> behaviouralStates;
+    deque<multiset<double>> profiles;
 
 public:
     ~PoolProxy() {}
@@ -25,8 +31,8 @@ public:
         return instance;
     }
 
-    Pool<Bidder> bidderPool;
-    Pool<Team> teamPool;
+    BidderPool<Bidder> bidderPool;
+    TeamPool<Team> teamPool;
 
     int teamCreate(int genTime);
     int bidderCreate(int action, int featureDimension, int maxProgSize, int genTime);
