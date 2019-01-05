@@ -4,29 +4,44 @@
 
 using std::max_element;
 
-Team::Team(long genTime): genTime(genTime) {
-    isRootTeam = true;
+Team::Team(int genTime): genTime(genTime) {
+    refCount = 0;
 }
 
-long Team::getId() {
+int Team::getId() {
     return id;
 }
 
-void Team::setId(long id) {
+void Team::setId(int id) {
     this->id = id;
 }
 
 bool Team::isRoot() {
-    return isRootTeam;
+    return refCount == 0;
 }
 
-void Team::setRoot(bool isRootTeam) {
-    this->isRootTeam = isRootTeam;
+int Team::getRefCount() {
+    return refCount;
 }
 
-void Team::addBidder(long id) {
+void Team::incRefCount() {
+    refCount++;
+}
+
+void Team::decRefCount() {
+    refCount--;
+}
+
+const unordered_set<int>& Team::getBidders() {
+    return memberBidders;
+}
+
+void Team::addBidder(int id) {
     memberBidders.insert(id);
-    TPGData::GetInstance().bidderPool.get(id).incRefCount();
+}
+
+void Team::removeBidder(int id) {
+    memberBidders.erase(id);
 }
 
 void Team::clearReg() {
@@ -38,7 +53,7 @@ void Team::clearReg() {
 }
 
 struct BidderIdLookUpCompare {
-    bool operator()(long lhsId, long rhsId) {
+    bool operator()(int lhsId, int rhsId) {
         Bidder lhsBidder = TPGData::GetInstance().bidderPool.get(lhsId);
         Bidder rhsBidder = TPGData::GetInstance().bidderPool.get(rhsId);
         return lhsBidder < rhsBidder;
@@ -52,7 +67,7 @@ int Team::getAction(const vector<double> &state) {
         Bidder& bidder = tpgData.bidderPool.get(bidderId);
         bidder.setBidVal(bidder.bid(state));
     }
-    long bestBidderId = *max_element(memberBidders.begin(), memberBidders.end(), BidderIdLookUpCompare());
+    int bestBidderId = *max_element(memberBidders.begin(), memberBidders.end(), BidderIdLookUpCompare());
     activeBidders.insert(bestBidderId);
     Bidder bestBidder = tpgData.bidderPool.get(bestBidderId);
     int action = bestBidder.getAction();

@@ -1,7 +1,5 @@
 #include "poolproxy.h"
 
-using namespace;
-
 int PoolProxy::teamCreate(int genTime) {
     Team team(genTime);
     int teamId = teamPool.insert(team);

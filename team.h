@@ -7,21 +7,25 @@ using std::vector;
 
 class Team {
 private:
-    long genTime;
-    long id;
-    bool isRootTeam;
-    unordered_set<long> memberBidders;
-    unordered_set<long> activeBidders;
+    int genTime;
+    int id;
+    int refCount;
+    unordered_set<int> memberBidders;
+    unordered_set<int> activeBidders;
 
 public:
     Team() {};
-    Team(long genTime);
+    Team(int genTime);
 
-    long getId();
-    void setId(long id);
+    int getId();
+    void setId(int id);
     bool isRoot();
-    void setRoot(bool isRootTeam);
-    void addBidder(long id);
+    int getRefCount();
+    void incRefCount();
+    void decRefCount();
+    const unordered_set<int>& getBidders();
+    void addBidder(int id);
+    void removeBidder(int id);
     void clearReg();
     int getAction(const vector<double> &state);
 };

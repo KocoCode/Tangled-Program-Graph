@@ -36,6 +36,7 @@ public:
 
     int teamCreate(int genTime);
     int bidderCreate(int action, int featureDimension, int maxProgSize, int genTime);
+    int bidderCreate(const Bidder &toCopy, long genTime);
     void teamRemove(int teamId);
     int teamRandom();
     int teamRootRandom();
@@ -47,11 +48,7 @@ public:
     int bidderSize();
     void bidderCleanup();
     void teamRootMaintain();
-    void teamAddBidder(int bidderId);
-    void teamRemoveBidder(int bidderId);
-    void teamIncRef(int teamId);
-    void teamDecRef(int teamId);
-    void bidderIncRef(int bidderId);
-    void bidderDecRef(int bidderId);
+    void teamAddBidder(int teamId, int bidderId);
+    void teamRemoveBidder(int teamId, int bidderId);
     int numAtomic(int teamId);
 };

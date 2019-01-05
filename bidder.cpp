@@ -56,7 +56,7 @@ void Bidder::markIntrons() {
             }
             // Rx <- op Rx Iy; Get feature index y
             else {
-                long feature = ((*it & srcMask) >> srcShift).to_ulong() % featureDimension;
+                int feature = ((*it & srcMask) >> srcShift).to_ulong() % featureDimension;
                 effFeatures.insert(feature);
             }
         }
@@ -68,7 +68,7 @@ void Bidder::markIntrons() {
     reverse(isIntron.begin(), isIntron.end());
 }
 
-Bidder::Bidder(long action, long featureDimension, int maxProgSize, long genTime):
+Bidder::Bidder(int action, int featureDimension, int maxProgSize, int genTime):
     action(action), featureDimension(featureDimension), ancestralGenTime(genTime), genTime(genTime) {
     refCount = 0;
     REG = vector<double>(REGISTER_SIZE, 0);
@@ -88,7 +88,7 @@ Bidder::Bidder(long action, long featureDimension, int maxProgSize, long genTime
     markIntrons();
 }
 
-Bidder::Bidder(const Bidder &toCopy, long genTime): genTime(genTime) {
+Bidder::Bidder(const Bidder &toCopy, int genTime): genTime(genTime) {
     action = toCopy.action;
     ancestralGenTime = toCopy.ancestralGenTime;
     featureDimension = toCopy.featureDimension;
@@ -112,11 +112,11 @@ void Bidder::printProg() {
     }
 }
 
-long Bidder::getId() {
+int Bidder::getId() {
     return id;
 }
 
-void Bidder::setId(long id) {
+void Bidder::setId(int id) {
     this->id = id;
 }
 
@@ -250,6 +250,10 @@ double Bidder::bid(const vector<double> &feature) {
     }
 
     return REG[0];
+}
+
+int Bidder::getRefCount() {
+    return refCount;
 }
 
 void Bidder::incRefCount() {

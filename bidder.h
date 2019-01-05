@@ -9,13 +9,13 @@ using std::unordered_set;
 class Bidder {
 private:
     int action;
-    long ancestralGenTime;
+    int ancestralGenTime;
     vector<instruction> prog;
-    long featureDimension;
+    int featureDimension;
     int effProgSize;
-    unordered_set<long long> effFeatures;
-    long genTime;
-    long id;
+    unordered_set<int> effFeatures;
+    int genTime;
+    int id;
     vector <bool> isIntron;
     int refCount;
     vector <double> profile;
@@ -26,16 +26,17 @@ public:
     vector<double> REG;
 
     Bidder() {}
-    Bidder(long action, long featureDimension, int maxProgSize, long genTime);
-    Bidder(const Bidder &toCopy, long genTime);
+    Bidder(int action, int featureDimension, int maxProgSize, int genTime);
+    Bidder(const Bidder &toCopy, int genTime);
 
     void printProg();
-    long getId();
-    void setId(long id);
+    int getId();
+    void setId(int id);
     int getAction();
     void setBidVal(double bidVal);
     void clearReg();
     double bid(const vector<double> &feature);
+    int getRefCount();
     void incRefCount();
     void decRefCount();
     bool mutateProg(double pDelete, double pAdd, double pSwap, double pMutate, int maxProgSize);
