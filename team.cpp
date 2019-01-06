@@ -36,7 +36,7 @@ void Team::decRefCount() {
     refCount--;
 }
 
-const unordered_set<int>& Team::getBidders() {
+const RandomizedSet& Team::getBidders() {
     return memberBidders;
 }
 
@@ -49,11 +49,11 @@ void Team::addBidder(int id) {
 }
 
 void Team::removeBidder(int id) {
-    memberBidders.erase(id);
+    memberBidders.remove(id);
 }
 
 bool Team::findBidder(int id) {
-    return memberBidders.find(id) != memberBidders.end();
+    return memberBidders.find(id);
 }
 
 /*

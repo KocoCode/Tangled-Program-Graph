@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_set>
 #include <vector>
+#include "pool.h"
 
 using std::unordered_set;
 using std::vector;
@@ -10,7 +11,7 @@ private:
     int genTime;
     int id;
     int refCount;
-    unordered_set<int> memberBidders;
+    RandomizedSet memberBidders;
     unordered_set<int> activeBidders;
 
 public:
@@ -24,7 +25,7 @@ public:
     int getRefCount();
     void incRefCount();
     void decRefCount();
-    const unordered_set<int>& getBidders();
+    const RandomizedSet& getBidders();
     int bidderSize();
     void addBidder(int id);
     void removeBidder(int id);

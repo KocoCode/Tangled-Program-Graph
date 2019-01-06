@@ -37,14 +37,14 @@ public:
         myassert(team.getId() == id, lineno);
         myassert(team.getRefCount() == refCount, lineno);
         myassert(team.isRoot() == isRoot, lineno);
-        myassert(team.getBidders().size() == bidderSize, lineno);
+        myassert(team.bidderSize() == bidderSize, lineno);
     }
 
     void teamAssert(int lineno, int id, int refCount, bool isRoot, size_t bidderSize) {
         Team& team = poolProxy.teamGet(id);
         myassert(team.getRefCount() == refCount, lineno);
         myassert(team.isRoot() == isRoot, lineno);
-        myassert(team.getBidders().size() == bidderSize, lineno);
+        myassert(team.bidderSize() == bidderSize, lineno);
     }
     
     void poolProxyAssert(int lineno, int teamSize, int teamRootSize, int bidderSize) {

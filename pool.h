@@ -47,11 +47,11 @@ public:
         return m.find(id) != m.end();
     }
 
-    vector<int>::iterator begin() {
+    vector<int>::const_iterator begin() const {
         return v.begin();
     }
 
-    vector<int>::iterator end() {
+    vector<int>::const_iterator end() const {
         return v.end();
     }
 };
