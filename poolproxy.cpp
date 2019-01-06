@@ -15,12 +15,16 @@ int PoolProxy::bidderCreate(int action, int featureDimension, int maxProgSize, i
     return bidderPool.insert(bidder);
 }
 
-int PoolProxy::bidderCreate(const Bidder &toCopy, long genTime) {
+int PoolProxy::bidderCreate(const Bidder &toCopy, int genTime) {
     Bidder bidder(toCopy, genTime);
     if (bidder.getAction() >= 0) {
         teamIncRef(bidder.getAction());
     }
     return bidderPool.insert(bidder);
+}
+
+int PoolProxy::bidderCreate(int idToCopy, int genTime) {
+    return bidderCreate(bidderPool.get(idToCopy), genTime);
 }
 
 void PoolProxy::teamRemove(int teamId) {

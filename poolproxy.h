@@ -40,7 +40,8 @@ public:
 
     int teamCreate(int genTime);
     int bidderCreate(int action, int featureDimension, int maxProgSize, int genTime);
-    int bidderCreate(const Bidder &toCopy, long genTime);
+    int bidderCreate(const Bidder &toCopy, int genTime);
+    int bidderCreate(int idToCopy, int genTime);
     void teamRemove(int teamId);
     int teamRandom();
     int teamRootRandom();

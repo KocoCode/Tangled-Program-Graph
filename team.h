@@ -26,6 +26,7 @@ public:
     void incRefCount();
     void decRefCount();
     const RandomizedSet& getBidders();
+    int randomBidder();
     int bidderSize();
     void addBidder(int id);
     void removeBidder(int id);

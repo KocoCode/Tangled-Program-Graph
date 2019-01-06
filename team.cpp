@@ -40,6 +40,10 @@ const RandomizedSet& Team::getBidders() {
     return memberBidders;
 }
 
+int Team::randomBidder() {
+    return memberBidders.random();
+}
+
 int Team::bidderSize() {
     return memberBidders.size();
 }
