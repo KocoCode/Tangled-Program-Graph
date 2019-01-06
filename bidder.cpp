@@ -3,7 +3,7 @@
 #include <cmath>
 #include "bidder.h"
 
-#define SHOWEXEC
+// #define SHOWEXEC
 
 using std::reverse;
 using std::fill;
