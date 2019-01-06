@@ -23,8 +23,6 @@ private:
     void bidderDecRef(int bidderId);
 
     unordered_set<int> addPendingRootTeam, removePendingRootTeam;
-    deque<vector<double>> behaviouralStates;
-    deque<multiset<double>> profiles;
 
 public:
     ~PoolProxy() {}
@@ -37,6 +35,8 @@ public:
 
     BidderPool<Bidder> bidderPool;
     TeamPool<Team> teamPool;
+    deque<vector<double>> behaviouralStates;
+    deque<multiset<double>> profiles;
 
     int teamCreate(int genTime);
     int bidderCreate(int action, int featureDimension, int maxProgSize, int genTime);

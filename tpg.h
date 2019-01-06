@@ -3,6 +3,10 @@
 #include "team.h"
 #include "poolproxy.h"
 
+#include <functional>
+
+using std::function;
+
 class TPG {
 private:
     int numAtomicActions;
@@ -22,6 +26,7 @@ private:
     double pmm;
     double pmn;
     int omega;
+    const double BID_EPSILON = 1e-5;
 public:
     TPG(int _numAtomicActions, int numFeatureDimension,
     int _numBehaviouralStates=50, int _maxProgSize=96, int _Rsize=90,
@@ -33,6 +38,7 @@ public:
     void genTeams(int genTime);
     void genTeams(int genTime, int parentId);
     void genUniqueBidder(int bidderId);
+    void initTeams();
     void selTeams(int genTime);
     void cleanup(int genTime);
     void initBehaviouralStates(function<vector<double>()> initFunc);

@@ -1,16 +1,17 @@
 #include "tpg.h"
 
-#include <multiset>
+#include <set>
+#include <algorithm>
 
 using namespace std;
 
 TPG::TPG(int _numAtomicActions, int _numFeatureDimension,
-    int _numBehaviouralStates=50, int _maxProgSize=96, int _Rsize=90,
-    double _Rgap=0.5, double _pAddProfilePoint=0.0005, double _pAtomic=0.5,
-    double _pBidAdd=0.5, double _pBidDelete=0.5, double _pBidMutate=1,
-    double _pBidSwap=1, double _pma=0.7, double _pmd=0.7, double _pmm=0.2,
-    double _pmn=0.1, int omega=5):
-    numAtomicActionsctions(_numAtomicActions),
+    int _numBehaviouralStates, int _maxProgSize, int _Rsize,
+    double _Rgap, double _pAddProfilePoint, double _pAtomic,
+    double _pBidAdd, double _pBidDelete, double _pBidMutate,
+    double _pBidSwap, double _pma, double _pmd, double _pmm,
+    double _pmn, int omega):
+    numAtomicActions(_numAtomicActions),
     numBehaviouralStates(_numBehaviouralStates),
     numFeatureDimension(_numFeatureDimension), maxProgSize(_maxProgSize),
     Rsize(_Rsize), Rgap(_Rgap), pAddProfilePoint(_pAddProfilePoint),
@@ -18,15 +19,15 @@ TPG::TPG(int _numAtomicActions, int _numFeatureDimension,
     pmn(_pmn) {
 
     PoolProxy& poolProxy = PoolProxy::GetInstance();
-    poolProxy.behaviouralStates.reserve(numBehaviouralStates);
-    poolProxy.profiles.reserve(numBehaviouralStates);
+    poolProxy.behaviouralStates.resize(numBehaviouralStates);
+    poolProxy.profiles.resize(numBehaviouralStates);
 }
 
 void TPG::genTeams(int genTime) {
     PoolProxy& poolProxy = PoolProxy::GetInstance();
     int numNewTeams = 0;
 
-    while (poolProxy.rootSize() < Rsize) {
+    while (poolProxy.teamRootSize() < Rsize) {
         auto parentId = poolProxy.teamPool.randomRootTeam();
         genTeams(genTime, parentId);
         numNewTeams++;
@@ -37,20 +38,20 @@ void TPG::genTeams(int genTime) {
 
 void TPG::genTeams(int genTime, int parentId) {
     PoolProxy& poolProxy = PoolProxy::GetInstance();
-    int childId = PoolProxy.teamCreate(genTime);
+    int childId = poolProxy.teamCreate(genTime);
 
     // Add bidders from parentTeam
     for (auto id : poolProxy.teamGet(parentId).getBidders()) {
-        poolProxy.TeamAddBidder(childId, id);
+        poolProxy.teamAddBidder(childId, id);
     }
 
     // Remove bidders
-    for (double b = 1.0; drand48() < b and childTeam.bidderSize() > 2; b = b * pmd) {
+    for (double b = 1.0; drand48() < b and poolProxy.teamGet(childId).bidderSize() > 2; b = b * pmd) {
         int bidderId;
         do {
             bidderId = poolProxy.teamGet(childId).randomBidder();
         } while (poolProxy.bidderGet(bidderId).getAction() < 0 and poolProxy.numAtomic(childId) < 2);
-        childId.teamRemoveBidder(bidderId);
+        poolProxy.teamRemoveBidder(childId, bidderId);
     }
 
     // Add bidders
@@ -58,8 +59,8 @@ void TPG::genTeams(int genTime, int parentId) {
         int bidderId;
         do {
             bidderId = poolProxy.bidderRandom();
-        } while (poolProxy.bidderGet(bidderId).getAction() == childTeam.getId() or poolProxy.teamFindBidder(childId, bidderId));
-        poolProxy.teamAddBidder(bidderId);
+        } while (poolProxy.bidderGet(bidderId).getAction() == childId or poolProxy.teamFindBidder(childId, bidderId));
+        poolProxy.teamAddBidder(childId, bidderId);
     }
 
     // Mutate bidders
@@ -79,17 +80,17 @@ void TPG::genTeams(int genTime, int parentId) {
                     changedL = poolProxy.bidderGet(newBidderId).muBid(pBidDelete, pBidAdd, pBidSwap, pBidMutate, maxProgSize);
                 } while (changedL == false);
 
-                genUniqueBidder(newbidderId);
+                genUniqueBidder(newBidderId);
 
                 if (drand48() < pmn) {
                     if (genTime == 1 or (poolProxy.bidderGet(bidderId).getAction() < 0 and (poolProxy.numAtomic(childId) < 2 ? true : drand48() < pAtomic))) {
-                        poolProxy.setAction(newBidderId, -1 - (int)(drand48() * numAtomicActions));
+                        poolProxy.bidderSetAction(newBidderId, -1 - (int)(drand48() * numAtomicActions));
                     } else {
                         int id;
                         do {
                             id = poolProxy.teamRandom();
                         } while (id == childId or poolProxy.teamGet(id).genTime() == genTime);
-                        poolProxy.setAction(newBidderId, id);
+                        poolProxy.bidderSetAction(newBidderId, id);
                     }
                 }
             }
@@ -100,7 +101,7 @@ void TPG::genTeams(int genTime, int parentId) {
         for (auto bidderId : need_add) {
             poolProxy.teamAddBidder(childId, bidderId);
         }
-    } while (changeM == false);
+    } while (changedM == false);
 }
 
 void TPG::genUniqueBidder(int bidderId) {
@@ -120,14 +121,14 @@ void TPG::genUniqueBidder(int bidderId) {
         for (int i = 0; i < profiles.size(); ++i) {
             auto it = profiles[i].lower_bound(profile[i]);
             if (it != profiles[i].end()) {
-                if (fabs(profile[i] - *it) < EPS) {
+                if (fabs(profile[i] - *it) < BID_EPSILON) {
                     success = false;
                     break;
                 }
             }
-            if (it != profile[i].begin()) {
+            if (it != profiles[i].begin()) {
                 --it;
-                if (fabs(profile[i] - *it) < EPS) {
+                if (fabs(profile[i] - *it) < BID_EPSILON) {
                     success = false;
                     break;
                 }
@@ -164,10 +165,10 @@ void TPG::initTeams() {
 
         int teamId = poolProxy.teamCreate(1); // genTime = 1
         int bidderId;
-        bidderId = poolProxy.bidderCreate(a1, numFeatureDimension, maxProgSize, genTime);
+        bidderId = poolProxy.bidderCreate(a1, numFeatureDimension, maxProgSize, 1);
         genUniqueBidder(bidderId);
         poolProxy.teamAddBidder(teamId, bidderId);
-        bidderId = poolProxy.bidderCreate(a2, numFeatureDimension, maxProgSize, genTime);
+        bidderId = poolProxy.bidderCreate(a2, numFeatureDimension, maxProgSize, 1);
         genUniqueBidder(bidderId);
         poolProxy.teamAddBidder(teamId, bidderId);
     }
@@ -202,7 +203,7 @@ void TPG::selTeams(int genTeam) {
     int needDeleted = floor(teams.size() * Rgap);
     partial_sort(teams.begin(), teams.begin() + needDeleted, teams.end(),
       [](const pair<int, double>& l, const pair<int, double>& r){
-      return l.second < r.second});
+      return l.second < r.second;});
 
     for (int i = 0; i < needDeleted; ++i) {
         poolProxy.teamRemove(teams[i].first);
