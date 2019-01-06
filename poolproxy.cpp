@@ -120,6 +120,10 @@ void PoolProxy::bidderSetAction(int bidderId, int action) {
         teamIncRef(action);
 }
 
+bool PoolProxy::teamFindBidder(int teamId, int bidderId) {
+    return teamPool.get(teamId).findBidder(bidderId);
+}
+
 void PoolProxy::teamIncRef(int teamId) {
     Team& team = teamPool.get(teamId);
     if (team.getRefCount() == 0) {

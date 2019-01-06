@@ -43,6 +43,10 @@ public:
         return m.size();
     }
 
+    bool find(int id) {
+        return m.find(id) != m.end();
+    }
+
     vector<int>::iterator begin() {
         return v.begin();
     }

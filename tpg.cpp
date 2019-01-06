@@ -58,7 +58,7 @@ void TPG::genTeams(int genTime, int parentId) {
         int bidderId;
         do {
             bidderId = poolProxy.bidderRandom();
-        } while (poolProxy.bidderGet(bidderId).getAction() == childTeam.getId());
+        } while (poolProxy.bidderGet(bidderId).getAction() == childTeam.getId() or poolProxy.teamFindBidder(childId, bidderId));
         poolProxy.teamAddBidder(bidderId);
     }
 

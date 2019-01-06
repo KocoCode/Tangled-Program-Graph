@@ -55,5 +55,6 @@ public:
     void teamAddBidder(int teamId, int bidderId);
     void teamRemoveBidder(int teamId, int bidderId);
     void bidderSetAction(int bidderId, int action);
+    bool teamFindBidder(int teamId, int bidderId);
     int numAtomic(int teamId);
 };

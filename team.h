@@ -26,6 +26,7 @@ public:
     const unordered_set<int>& getBidders();
     void addBidder(int id);
     void removeBidder(int id);
+    bool findBidder(int id);
     void clearReg();
     int getAction(const vector<double> &state);
 };

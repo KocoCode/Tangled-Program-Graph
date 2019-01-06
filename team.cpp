@@ -43,6 +43,11 @@ void Team::addBidder(int id) {
 void Team::removeBidder(int id) {
     memberBidders.erase(id);
 }
+
+bool Team::findBidder(int id) {
+    return memberBidders.find(id) != memberBidders.end();
+}
+
 /*
 void Team::clearReg() {
     TPGData& tpgData = TPGData::GetInstance();
