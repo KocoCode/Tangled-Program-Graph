@@ -189,7 +189,19 @@ public:
         }
         assert(hasTeamId0); // very unlikely to fail; should have around half of those be 0
 
+        assert(poolProxy.teamFindBidder(teamId0, bidderId0));
+        assert(!poolProxy.teamFindBidder(teamId0, bidderId3));
+        assert(poolProxy.numAtomic(teamId0) == 2);
+        assert(poolProxy.numAtomic(teamId1) == 2);
 
+        for (auto teamId: poolProxy.getTeams()) {
+            assert(0 <= teamId && teamId < 2);
+            assert(poolProxy.numAtomic(teamId) == 2);
+        }
+        for (auto teamId: poolProxy.getRootTeams()) {
+            assert(0 <= teamId && teamId < 2);
+            assert(poolProxy.numAtomic(teamId) == 2);
+        }
     }
 };
 
