@@ -13,6 +13,7 @@ private:
     int refCount;
     RandomizedSet memberBidders;
     unordered_set<int> activeBidders;
+    vector<double> outcomes;
 
 public:
     Team() {};
@@ -32,5 +33,8 @@ public:
     void removeBidder(int id);
     bool findBidder(int id);
     void clearReg();
-    int getAction(const vector<double> &state);
+    int getAction(const vector<double> &state, unordered_set<int>& visitedTeams);
+    void clearOutcomes();
+    void addOutcome(double outcome);
+    double getMeanOutcome();
 };
