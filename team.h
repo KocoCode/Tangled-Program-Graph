@@ -19,11 +19,13 @@ public:
 
     int getId();
     void setId(int id);
+    int getGenTime();
     bool isRoot();
     int getRefCount();
     void incRefCount();
     void decRefCount();
     const unordered_set<int>& getBidders();
+    int bidderSize();
     void addBidder(int id);
     void removeBidder(int id);
     bool findBidder(int id);

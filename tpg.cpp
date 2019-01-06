@@ -79,7 +79,7 @@ void TPG::genTeams(int genTime, int parentId) {
 
                 bool changedL = false;
                 do {
-                    changedL = poolProxy.bidderGet(newBidderId).muBid(pBidDelete, pBidAdd, pBidSwap, pBidMutate, maxProgSize);
+                    changedL = poolProxy.bidderGet(newBidderId).mutateProg(pBidDelete, pBidAdd, pBidSwap, pBidMutate, maxProgSize);
                 } while (changedL == false);
 
                 genUniqueBidder(newBidderId);
@@ -91,7 +91,7 @@ void TPG::genTeams(int genTime, int parentId) {
                         int id;
                         do {
                             id = poolProxy.teamRandom();
-                        } while (id == childId or poolProxy.teamGet(id).genTime() == genTime);
+                        } while (id == childId or poolProxy.teamGet(id).getGenTime() == genTime);
                         poolProxy.bidderSetAction(newBidderId, id);
                     }
                 }
@@ -141,7 +141,7 @@ void TPG::genUniqueBidder(int bidderId) {
         } else {
             bool changedL = false;
             do {
-                changedL = poolProxy.bidderGet(bidderId).muBid(pBidDelete, pBidAdd, pBidSwap, pBidMutate, maxProgSize);
+                changedL = poolProxy.bidderGet(bidderId).mutateProg(pBidDelete, pBidAdd, pBidSwap, pBidMutate, maxProgSize);
             } while (changedL == false);
         }
     }

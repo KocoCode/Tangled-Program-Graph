@@ -16,6 +16,10 @@ void Team::setId(int id) {
     this->id = id;
 }
 
+int Team::getGenTime() {
+    return genTime;
+}
+
 bool Team::isRoot() {
     return refCount == 0;
 }
@@ -34,6 +38,10 @@ void Team::decRefCount() {
 
 const unordered_set<int>& Team::getBidders() {
     return memberBidders;
+}
+
+int Team::bidderSize() {
+    return memberBidders.size();
 }
 
 void Team::addBidder(int id) {

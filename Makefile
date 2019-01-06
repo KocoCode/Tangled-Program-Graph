@@ -1,5 +1,5 @@
 FLAGS = -std=c++17 -O3 -Wall -Wextra -Wshadow -pedantic
-TESTS = bidder_test team_test pool_test poolproxy_test
+TESTS = bidder_test team_test pool_test poolproxy_test tpg_test
 all: team_test
 test: $(TESTS)
 
@@ -13,6 +13,9 @@ pool_test: pool_test.o
 	g++ $(FLAGS) -o $@ $^
 
 poolproxy_test: poolproxy_test.o poolproxy.o team.o bidder.o instruction.o
+	g++ $(FLAGS) -o $@ $^
+
+tpg_test: tpg_test.o tpg.o poolproxy.o team.o bidder.o instruction.o
 	g++ $(FLAGS) -o $@ $^
 
 %.o: %.cpp
