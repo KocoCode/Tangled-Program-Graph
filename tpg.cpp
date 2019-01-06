@@ -10,13 +10,15 @@ TPG::TPG(int _numAtomicActions, int _numFeatureDimension,
     double _Rgap, double _pAddProfilePoint, double _pAtomic,
     double _pBidAdd, double _pBidDelete, double _pBidMutate,
     double _pBidSwap, double _pma, double _pmd, double _pmm,
-    double _pmn, int omega):
+    double _pmn, int _omega):
     numAtomicActions(_numAtomicActions),
+    numFeatureDimension(_numFeatureDimension),
     numBehaviouralStates(_numBehaviouralStates),
-    numFeatureDimension(_numFeatureDimension), maxProgSize(_maxProgSize),
-    Rsize(_Rsize), Rgap(_Rgap), pAddProfilePoint(_pAddProfilePoint),
-    pAtomic(_pAtomic), pBidAdd(_pBidAdd), pBidDelete(_pBidDelete), pmm(_pmm),
-    pmn(_pmn) {
+    maxProgSize(_maxProgSize), Rsize(_Rsize), Rgap(_Rgap),
+    pAddProfilePoint(_pAddProfilePoint), pAtomic(_pAtomic), pBidAdd(_pBidAdd),
+    pBidDelete(_pBidDelete), pBidMutate(_pBidMutate),
+    pBidSwap(_pBidSwap), pma(_pma), pmd(_pmd), pmm(_pmm), pmn(_pmn),
+    omega(_omega) {
 
     PoolProxy& poolProxy = PoolProxy::GetInstance();
     poolProxy.behaviouralStates.resize(numBehaviouralStates);
@@ -113,12 +115,12 @@ void TPG::genUniqueBidder(int bidderId) {
     bool stop = false;
     while (stop == false) {
         profile.clear();
-        for (int i = 0; i < behaviouralStates.size(); ++i) {
+        for (int i = 0; i < (int)behaviouralStates.size(); ++i) {
             profile.push_back(poolProxy.bidderGet(bidderId).bid(behaviouralStates[i]));
         }
 
         bool success = true;
-        for (int i = 0; i < profiles.size(); ++i) {
+        for (int i = 0; i < (int)profiles.size(); ++i) {
             auto it = profiles[i].lower_bound(profile[i]);
             if (it != profiles[i].end()) {
                 if (fabs(profile[i] - *it) < BID_EPSILON) {
@@ -143,7 +145,7 @@ void TPG::genUniqueBidder(int bidderId) {
             } while (changedL == false);
         }
     }
-    for (int i = 0; i < profiles.size(); ++i) {
+    for (int i = 0; i < (int)profiles.size(); ++i) {
         profiles[i].insert(profile[i]);
     }
 }

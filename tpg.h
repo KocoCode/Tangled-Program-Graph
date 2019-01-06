@@ -33,7 +33,7 @@ public:
     double _Rgap=0.5, double _pAddProfilePoint=0.0005, double _pAtomic=0.5,
     double _pBidAdd=0.5, double _pBidDelete=0.5, double _pBidMutate=1,
     double _pBidSwap=1, double _pma=0.7, double _pmd=0.7, double _pmm=0.2,
-    double _pmn=0.1, int omega=5);
+    double _pmn=0.1, int _omega=5);
 
     void genTeams(int genTime);
     void genTeams(int genTime, int parentId);
