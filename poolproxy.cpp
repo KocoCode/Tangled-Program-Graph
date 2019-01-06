@@ -50,6 +50,14 @@ int PoolProxy::bidderRandom() {
     return bidderPool.random();
 }
 
+const RandomizedSet& PoolProxy::getTeams() {
+    return teamPool.teams();
+}
+
+const RandomizedSet& PoolProxy::getRootTeams() {
+    return teamPool.rootTeams();
+}
+
 Team& PoolProxy::teamGet(int teamId) {
     return teamPool.get(teamId);
 }

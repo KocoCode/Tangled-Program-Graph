@@ -147,4 +147,12 @@ public:
     void removeRootTeam(int id) {
         root_rs.remove(id);
     }
+
+    const RandomizedSet& teams() {
+        return rs;
+    }
+
+    const RandomizedSet& rootTeams() {
+        return root_rs;
+    }
 };

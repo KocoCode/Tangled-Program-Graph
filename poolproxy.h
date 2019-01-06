@@ -45,6 +45,8 @@ public:
     int teamRandom();
     int teamRootRandom();
     int bidderRandom();
+    const RandomizedSet& getTeams();
+    const RandomizedSet& getRootTeams();
     Team& teamGet(int teamId);
     Bidder& bidderGet(int bidderId);
     int teamSize();
