@@ -24,18 +24,18 @@ int PoolProxy::bidderCreate(const Bidder &toCopy, int genTime) {
 }
 
 int PoolProxy::bidderCreate(int idToCopy, int genTime) {
-    return bidderCreate(bidderPool.get(idToCopy), genTime);
+    return bidderCreate(bidderGet(idToCopy), genTime);
 }
 
 void PoolProxy::teamRemove(int teamId) {
-    for (auto bidderId : teamPool.get(teamId).getBidders()) {
+    for (auto bidderId : teamGet(teamId).getBidders()) {
         bidderDecRef(bidderId);
     }
     teamPool.remove(teamId);
 }
 
 void PoolProxy::bidderRemove(int bidderId) {
-    int action = bidderPool.get(bidderId).getAction();
+    int action = bidderGet(bidderId).getAction();
     if (action >= 0) {
         teamDecRef(action);
     }
@@ -91,7 +91,7 @@ void PoolProxy::bidderCleanup() {
     }
     for (auto id : gc) {
         for (int i = 0; i < behaviouralStates.size(); ++i) {
-            auto it = profiles[i].find(bidderPool.get(id).bid(behaviouralStates[i]));
+            auto it = profiles[i].find(bidderGet(id).bid(behaviouralStates[i]));
             profiles[i].erase(it);
         }
         bidderRemove(id);
@@ -112,17 +112,17 @@ void PoolProxy::teamRootMaintain() {
 }
 
 void PoolProxy::teamAddBidder(int teamId, int bidderId) {
-    teamPool.get(teamId).addBidder(bidderId);
+    teamGet(teamId).addBidder(bidderId);
     bidderIncRef(bidderId);
 }
 
 void PoolProxy::teamRemoveBidder(int teamId, int bidderId) {
-    teamPool.get(teamId).removeBidder(bidderId);
+    teamGet(teamId).removeBidder(bidderId);
     bidderDecRef(bidderId);
 }
 
 void PoolProxy::bidderSetAction(int bidderId, int action) {
-    Bidder& bidder = bidderPool.get(bidderId);
+    Bidder& bidder = bidderGet(bidderId);
     if (action == bidder.getAction())
         return;
     if (bidder.getAction() >= 0)
@@ -133,11 +133,11 @@ void PoolProxy::bidderSetAction(int bidderId, int action) {
 }
 
 bool PoolProxy::teamFindBidder(int teamId, int bidderId) {
-    return teamPool.get(teamId).findBidder(bidderId);
+    return teamGet(teamId).findBidder(bidderId);
 }
 
 void PoolProxy::teamIncRef(int teamId) {
-    Team& team = teamPool.get(teamId);
+    Team& team = teamGet(teamId);
     if (team.getRefCount() == 0) {
         teamPendRemoveRoot(teamId);
     }
@@ -145,7 +145,7 @@ void PoolProxy::teamIncRef(int teamId) {
 }
 
 void PoolProxy::teamDecRef(int teamId) {
-    Team& team = teamPool.get(teamId);
+    Team& team = teamGet(teamId);
     team.decRefCount();
     if (team.getRefCount() == 0) {
         teamPendAddRoot(teamId);
@@ -153,17 +153,17 @@ void PoolProxy::teamDecRef(int teamId) {
 }
 
 void PoolProxy::bidderIncRef(int bidderId) {
-    bidderPool.get(bidderId).incRefCount();
+    bidderGet(bidderId).incRefCount();
 }
 
 void PoolProxy::bidderDecRef(int bidderId) {
-    bidderPool.get(bidderId).decRefCount();
+    bidderGet(bidderId).decRefCount();
 }
 
 int PoolProxy::numAtomic(int teamId) {
     unordered_set<int> atomicActions;
-    for (auto bidderId : teamPool.get(teamId).getBidders()) {
-        int action = bidderPool.get(bidderId).getAction();
+    for (auto bidderId : teamGet(teamId).getBidders()) {
+        int action = bidderGet(bidderId).getAction();
         if (action < 0) atomicActions.insert(action);
     }
     return atomicActions.size();

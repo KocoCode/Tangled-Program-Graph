@@ -63,14 +63,14 @@ bool Team::findBidder(int id) {
 
 void Team::clearReg() {
     for (auto bidderId: memberBidders) {
-        PoolProxy::GetInstance().bidderPool.get(bidderId).clearReg();
+        PoolProxy::GetInstance().bidderGet(bidderId).clearReg();
     }
 }
 
 struct BidderIdLookUpCompare {
     bool operator()(int lhsId, int rhsId) {
-        Bidder lhsBidder = PoolProxy::GetInstance().bidderPool.get(lhsId);
-        Bidder rhsBidder = PoolProxy::GetInstance().bidderPool.get(rhsId);
+        Bidder lhsBidder = PoolProxy::GetInstance().bidderGet(lhsId);
+        Bidder rhsBidder = PoolProxy::GetInstance().bidderGet(rhsId);
         return lhsBidder < rhsBidder;
     }
 };
@@ -80,14 +80,14 @@ int Team::getAction(const vector<double> &state, unordered_set<int>& visitedTeam
     clearReg();
     visitedTeams.insert(id);
     for (auto bidderId: memberBidders) {
-        Bidder& bidder = poolProxy.bidderPool.get(bidderId);
+        Bidder& bidder = poolProxy.bidderGet(bidderId);
         bidder.setBidVal(bidder.bid(state)); // better skip those whose action is a visitedTeam
     }
     vector<int> bidderSorted(memberBidders.begin(), memberBidders.end());
     sort(bidderSorted.begin(), bidderSorted.end(), BidderIdLookUpCompare());
     for (auto it = bidderSorted.rbegin(); it != bidderSorted.rend(); ++it) {
         int bidderId = *it;
-        Bidder bidder = poolProxy.bidderPool.get(bidderId);
+        Bidder bidder = poolProxy.bidderGet(bidderId);
         int action = bidder.getAction();
         if (action < 0) {
             activeBidders.insert(bidderId);
@@ -95,7 +95,7 @@ int Team::getAction(const vector<double> &state, unordered_set<int>& visitedTeam
         }
         else if (visitedTeams.find(action) == visitedTeams.end()) {
             activeBidders.insert(bidderId);
-            return poolProxy.teamPool.get(action).getAction(state, visitedTeams);
+            return poolProxy.teamGet(action).getAction(state, visitedTeams);
         }
     }
 }

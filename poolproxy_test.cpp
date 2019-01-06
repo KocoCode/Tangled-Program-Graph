@@ -190,17 +190,6 @@ public:
         assert(hasTeamId0); // very unlikely to fail; should have around half of those be 0
 
 
-/*
-        cout << poolProxy.teamRootSize() << endl; // 1
-        poolProxy.bidderCleanup(); // bidder4
-        teamAssert(__LINE__, teamId0, 0, true, 2);
-        cout << poolProxy.teamRootSize() << endl; // 3; root_rs and addPendingRootTeam intersects
-        poolProxyAssert(__LINE__, 2, 1, 4);
-*/
-
-        //poolProxy.teamRootMaintain();
-        //teamAssert(__LINE__, teamId0, -1, false, 2); // dec twice; no need to dec in cleanup
-        //poolProxyAssert(__LINE__, 2, 1, 4);
     }
 };
 
