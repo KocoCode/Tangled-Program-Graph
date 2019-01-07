@@ -14,6 +14,7 @@ private:
     RandomizedSet memberBidders;
     unordered_set<int> activeBidders;
     vector<double> outcomes;
+    double outcomeSum;
 
 public:
     Team() {};

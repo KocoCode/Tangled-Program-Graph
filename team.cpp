@@ -7,6 +7,7 @@ using std::accumulate;
 
 Team::Team(int genTime): genTime(genTime) {
     refCount = 0;
+    outcomeSum = 0;
 }
 
 int Team::getId() {
@@ -102,12 +103,14 @@ int Team::getAction(const vector<double> &state, unordered_set<int>& visitedTeam
 
 void Team::clearOutcomes() {
     outcomes.clear();
+    outcomeSum = 0;
 }
 
 void Team::addOutcome(double outcome) {
     outcomes.push_back(outcome);
+    outcomeSum += outcome;
 }
 
 double Team::getMeanOutcome() {
-    return accumulate(outcomes.begin(), outcomes.end(), 0.0) / outcomes.size();
+    return outcomeSum / outcomes.size();
 }
