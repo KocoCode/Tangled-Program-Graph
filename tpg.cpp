@@ -245,3 +245,18 @@ const RandomizedSet& TPG::getRootTeams() {
     PoolProxy& poolProxy = PoolProxy::GetInstance();
     return poolProxy.getRootTeams();
 }
+
+int TPG::getAction(int teamId, const vector<double> &state) {
+    PoolProxy& poolProxy = PoolProxy::GetInstance();
+    unordered_set<int> visitedTeams;
+    return -poolProxy.teamGet(teamId).getAction(state, visitedTeams) - 1; // map (-1..-n) => (0..n-1)
+}
+
+int TPG::getNumFeatureDimension() {
+    return numFeatureDimension;
+}
+
+void TPG::addOutcome(int teamId, double outcome) {
+    PoolProxy& poolProxy = PoolProxy::GetInstance();
+    poolProxy.teamGet(teamId).addOutcome(outcome);
+}

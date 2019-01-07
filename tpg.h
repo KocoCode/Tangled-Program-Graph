@@ -45,4 +45,7 @@ public:
     void initBehaviouralStates(function<vector<double>()> initFunc);
     void addBehaviouralState(const vector<double> behaviouralState);
     const RandomizedSet& getRootTeams();
+    int getAction(int teamId, const vector<double> &state);
+    int getNumFeatureDimension();
+    void addOutcome(int teamId, double outcome);
 };
