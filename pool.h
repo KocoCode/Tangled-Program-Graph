@@ -39,7 +39,7 @@ public:
         return v[uniform(gen, decltype(uniform)::param_type(0, v.size() - 1))];
     }
 
-    int size() {
+    int size() const {
         return m.size();
     }
 
