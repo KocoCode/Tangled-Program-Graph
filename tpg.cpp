@@ -192,6 +192,8 @@ void TPG::initTeams() {
             bidderUsed.insert(bidderId);
         }
     }
+
+    poolProxy.teamRootMaintain();
 }
 
 void TPG::selTeams(int genTeam) {
