@@ -238,3 +238,8 @@ void TPG::addBehaviouralState(const vector<double> behaviouralState) {
     poolProxy.profiles.pop_front();
     poolProxy.profiles.push_back(move(profiles));
 }
+
+const RandomizedSet& TPG::getRootTeams() {
+    PoolProxy& poolProxy = PoolProxy::GetInstance();
+    return poolProxy.getRootTeams();
+}

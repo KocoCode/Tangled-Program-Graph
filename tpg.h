@@ -1,6 +1,7 @@
 #pragma once
 #include "bidder.h"
 #include "team.h"
+#include "pool.h"
 #include "poolproxy.h"
 
 #include <functional>
@@ -43,4 +44,5 @@ public:
     void cleanup(int genTime);
     void initBehaviouralStates(function<vector<double>()> initFunc);
     void addBehaviouralState(const vector<double> behaviouralState);
+    const RandomizedSet& getRootTeams();
 };
