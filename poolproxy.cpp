@@ -92,7 +92,7 @@ void PoolProxy::bidderCleanup() {
     for (auto id : gc) {
         for (int i = 0; i < behaviouralStates.size(); ++i) {
             auto it = profiles[i].find(bidderGet(id).bid(behaviouralStates[i]));
-            profiles[i].erase(it);
+            if (it != profiles[i].end()) profiles[i].erase(it);
         }
         bidderRemove(id);
     }
