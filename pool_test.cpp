@@ -24,6 +24,9 @@ public:
     int getVal() {
         return val;
     }
+    int getAction() {
+        return 0;
+    }
 };
 
 struct Bar {
@@ -62,51 +65,59 @@ int main() {
         bpool.insert(Foo(i));
     }
     for (int i = 0; i < 1000; ++i) {
-        int r = bpool.random().second.getVal();
+        int id = bpool.random();
+        int r = bpool.get(id).getVal();
         assert(r >= 0 and r < 100);
     }
     assert(bpool.size() == 100);
-    bpool.get(50).setRefCount(1);
-    bpool.cleanup();
+    for (int i = 0; i < 100; ++i) {
+        if (i == 50) continue;
+        bpool.remove(i);
+    }
     for (int i = 0; i < 1000; ++i) {
-        int r = bpool.random().second.getVal();
+        int id = bpool.random();
+        int r = bpool.get(id).getVal();
         assert(bpool.get(r).getVal() == 50);
     }
     for (int i = 0; i < 50; ++i) {
         bpool.insert(Foo(i));
     }
     for (int i = 0; i < 1000; ++i) {
-        int r = bpool.random().second.getVal();
+        int id = bpool.random();
+        int r = bpool.get(id).getVal();
         assert(r >= 0 and r <= 50);
     }
     assert(bpool.size() == 51);
 
     TeamPool<Bar> tpool;
-    tpool.insert(Bar(0, true));
+    tpool.addRootTeam(tpool.insert(Bar(0, true)));
     for (int i = 1; i < 10; ++i) {
         auto tmp = Bar(i, false);
-        tpool.insert(tmp);
-        assert(tmp.getId() == i);
+        assert(tpool.insert(tmp) == i);
     }
     for (int i = 0; i < 1000; ++i) {
-        int r = tpool.random().second.getVal();
+        int id = tpool.randomRootTeam();
+        int r = tpool.get(id).getVal();
         assert(r >= 0 and r <= 9);
     }
     for (int i = 0; i < 1000; ++i) {
-        int r = tpool.randomRootTeam().second.getVal();
+        int id = tpool.randomRootTeam();
+        int r = tpool.get(id).getVal();
         assert(r == 0);
     }
     tpool.addRootTeam(9);
     tpool.removeRootTeam(0);
     for (int i = 0; i < 1000; ++i) {
-        int r = tpool.randomRootTeam().second.getVal();
+        int id = tpool.randomRootTeam();
+        int r = tpool.get(id).getVal();
         assert(r == 9);
     }
     for (int i = 6; i < 10; ++i) {
         tpool.remove(i);
     }
     for (int i = 0; i < 1000; ++i) {
-        int r = tpool.random().second.getVal();
+        int id = tpool.random();
+        int r = tpool.get(id).getVal();
         assert(r >= 0 and r <= 5);
     }
 }

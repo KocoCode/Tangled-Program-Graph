@@ -1,70 +1,116 @@
 #include <algorithm>
 #include "team.h"
-#include "tpgdata.h"
+#include "poolproxy.h"
 
-using std::max_element;
+using std::sort;
+using std::accumulate;
 
-Team& Team::CreateTeam(long genTime) {
-    Team team(genTime);
-    TPGData::GetInstance().teamPool.insert(team);
-    return TPGData::GetInstance().teamPool.get(team.getId());
+Team::Team(int genTime): genTime(genTime) {
+    refCount = 0;
+    outcomeSum = 0;
 }
 
-Team::Team(long genTime): genTime(genTime) {
-    isRootTeam = true;
-}
-
-long Team::getId() {
+int Team::getId() {
     return id;
 }
 
-void Team::setId(long id) {
+void Team::setId(int id) {
     this->id = id;
 }
 
+int Team::getGenTime() {
+    return genTime;
+}
+
 bool Team::isRoot() {
-    return isRootTeam;
+    return refCount == 0;
 }
 
-void Team::setRoot(bool isRootTeam) {
-    this->isRootTeam = isRootTeam;
+int Team::getRefCount() {
+    return refCount;
 }
 
-void Team::addBidder(long id) {
+void Team::incRefCount() {
+    refCount++;
+}
+
+void Team::decRefCount() {
+    refCount--;
+}
+
+const RandomizedSet& Team::getBidders() {
+    return memberBidders;
+}
+
+int Team::randomBidder() {
+    return memberBidders.random();
+}
+
+int Team::bidderSize() {
+    return memberBidders.size();
+}
+
+void Team::addBidder(int id) {
     memberBidders.insert(id);
-    TPGData::GetInstance().bidderPool.get(id).incRefCount();
+}
+
+void Team::removeBidder(int id) {
+    memberBidders.remove(id);
+}
+
+bool Team::findBidder(int id) {
+    return memberBidders.find(id);
 }
 
 void Team::clearReg() {
-    TPGData& tpgData = TPGData::GetInstance();
-    for (auto &bidderId: memberBidders) {
-        Bidder& bidder = tpgData.bidderPool.get(bidderId);
-        bidder.clearReg();
+    for (auto bidderId: memberBidders) {
+        PoolProxy::GetInstance().bidderGet(bidderId).clearReg();
     }
 }
 
 struct BidderIdLookUpCompare {
-    bool operator()(long lhsId, long rhsId) {
-        Bidder lhsBidder = TPGData::GetInstance().bidderPool.get(lhsId);
-        Bidder rhsBidder = TPGData::GetInstance().bidderPool.get(rhsId);
+    bool operator()(int lhsId, int rhsId) {
+        Bidder lhsBidder = PoolProxy::GetInstance().bidderGet(lhsId);
+        Bidder rhsBidder = PoolProxy::GetInstance().bidderGet(rhsId);
         return lhsBidder < rhsBidder;
     }
 };
 
-int Team::getAction(const vector<double> &state) {
-    TPGData& tpgData = TPGData::GetInstance();
+int Team::getAction(const vector<double> &state, unordered_set<int>& visitedTeams) {
+    PoolProxy& poolProxy = PoolProxy::GetInstance();
     clearReg();
-    for (auto &bidderId: memberBidders) {
-        Bidder& bidder = tpgData.bidderPool.get(bidderId);
-        bidder.setBidVal(bidder.bid(state));
+    visitedTeams.insert(id);
+    for (auto bidderId: memberBidders) {
+        Bidder& bidder = poolProxy.bidderGet(bidderId);
+        bidder.setBidVal(bidder.bid(state)); // better skip those whose action is a visitedTeam
     }
-    long bestBidderId = *max_element(memberBidders.begin(), memberBidders.end(), BidderIdLookUpCompare());
-    activeBidders.insert(bestBidderId);
-    Bidder bestBidder = tpgData.bidderPool.get(bestBidderId);
-    int action = bestBidder.getAction();
-    if (action < 0)
-        return action;
+    vector<int> bidderSorted(memberBidders.begin(), memberBidders.end());
+    sort(bidderSorted.begin(), bidderSorted.end(), BidderIdLookUpCompare());
+    for (auto it = bidderSorted.rbegin(); it != bidderSorted.rend(); ++it) {
+        int bidderId = *it;
+        Bidder bidder = poolProxy.bidderGet(bidderId);
+        int action = bidder.getAction();
+        if (action < 0) {
+            activeBidders.insert(bidderId);
+            return action;
+        }
+        else if (visitedTeams.find(action) == visitedTeams.end()) {
+            activeBidders.insert(bidderId);
+            return poolProxy.teamGet(action).getAction(state, visitedTeams);
+        }
+    }
+}
 
-    // action is a teamId
-    return tpgData.teamPool.get(action).getAction(state);
+void Team::clearOutcomes() {
+    outcomes.clear();
+    outcomeSum = 0;
+}
+
+void Team::addOutcome(double outcome) {
+    outcomes.push_back(outcome);
+    outcomeSum += outcome;
+}
+
+double Team::getMeanOutcome() {
+    return outcomeSum / outcomes.size();
 }

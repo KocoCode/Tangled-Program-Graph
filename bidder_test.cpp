@@ -1,28 +1,31 @@
 #include <iostream>
-#include <vector>
 #include <cassert>
 #include "bidder.h"
-#include "tpgdata.h"
-
+#include "poolproxy.h"
 
 using namespace std;
 
 int main() {
-    srand48(3);
-    TPGData& tpgData = TPGData::GetInstance();
-    Bidder& bidder1 = Bidder::CreateBidder(0, 20, 20, 0); // action, featureDimension, maxProgSize, genTime
-    cout << "Bidder1: " << bidder1.getId() << endl;
-    bidder1.printProg();
+    PoolProxy& poolProxy = PoolProxy::GetInstance();
+    int featureDimension = 10;
+    int maxProgSize = 300;
+    int genTime = 0;
+    vector<double> feature(10, drand48());
 
-    cout << endl;
-    Bidder& bidder2 = Bidder::CreateBidder(0, 20, 20, 0);
-    cout << "Bidder2: " << bidder2.getId() << endl;
-    bidder2.printProg();
+    int bidderId = poolProxy.bidderCreate(-1, featureDimension, maxProgSize, genTime);
+    Bidder& bidder = poolProxy.bidderGet(bidderId);
 
-    cout << endl;
-    Bidder& bidder3 = Bidder::CreateBidder(bidder2, 1);
-    cout << "Bidder3: " << bidder3.getId() << endl;
-    bidder3.printProg();
+    assert(bidder.getId() == bidderId);
+    assert(bidder.getAction() == -1);
+    bidder.setAction(-2);
+    assert(bidder.getAction() == -2);
+    bidder.bid(feature); // verify that this function runs without error
+
+    assert(bidder.getRefCount() == 0);
+    bidder.incRefCount();
+    assert(bidder.getRefCount() == 1);
+    bidder.decRefCount();
+    assert(bidder.getRefCount() == 0);
 
     return 0;
 }

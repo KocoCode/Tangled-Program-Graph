@@ -1,29 +1,41 @@
 #pragma once
 #include <unordered_set>
 #include <vector>
+#include "pool.h"
 
 using std::unordered_set;
 using std::vector;
 
 class Team {
 private:
-    long genTime;
-    long id;
-    bool isRootTeam;
-    unordered_set<long> memberBidders;
-    unordered_set<long> activeBidders;
+    int genTime;
+    int id;
+    int refCount;
+    RandomizedSet memberBidders;
+    unordered_set<int> activeBidders;
+    vector<double> outcomes;
+    double outcomeSum;
 
-    Team(long genTime);
 public:
-    static Team& CreateTeam(long genTime);
-
     Team() {};
+    Team(int genTime);
 
-    long getId();
-    void setId(long id);
+    int getId();
+    void setId(int id);
+    int getGenTime();
     bool isRoot();
-    void setRoot(bool isRootTeam);
-    void addBidder(long id);
+    int getRefCount();
+    void incRefCount();
+    void decRefCount();
+    const RandomizedSet& getBidders();
+    int randomBidder();
+    int bidderSize();
+    void addBidder(int id);
+    void removeBidder(int id);
+    bool findBidder(int id);
     void clearReg();
-    int getAction(const vector<double> &state);
+    int getAction(const vector<double> &state, unordered_set<int>& visitedTeams);
+    void clearOutcomes();
+    void addOutcome(double outcome);
+    double getMeanOutcome();
 };
