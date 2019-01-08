@@ -48,14 +48,12 @@ void TPG::genTeams(int genTime, int parentId) {
     }
 
     // Remove bidders
-    if (poolProxy.numAtomic(childId) > 2) {
-        for (double b = 1.0; drand48() < b and poolProxy.numAtomic(childId) > 2; b = b * pmd) {
-            int bidderId;
-            do {
-                bidderId = poolProxy.teamGet(childId).randomBidder();
-            } while (poolProxy.bidderGet(bidderId).getAction() < 0 and poolProxy.numAtomic(childId) < 2);
-            poolProxy.teamRemoveBidder(childId, bidderId);
-        }
+    for (double b = 1.0; drand48() < b and poolProxy.numAtomic(childId) > 2; b = b * pmd) {
+        int bidderId;
+        do {
+            bidderId = poolProxy.teamGet(childId).randomBidder();
+        } while (poolProxy.bidderGet(bidderId).getAction() < 0 and poolProxy.numAtomic(childId) < 2);
+        poolProxy.teamRemoveBidder(childId, bidderId);
     }
 
     // Add bidders
