@@ -205,7 +205,7 @@ void TPG::selTeams(int genTeam) {
     }
 
     int needDeleted = floor(teams.size() * Rgap);
-    partial_sort(teams.begin(), teams.begin() + needDeleted, teams.end(),
+    nth_element(teams.begin(), teams.begin() + needDeleted, teams.end(),
       [](const pair<int, double>& l, const pair<int, double>& r){
       return l.second < r.second;});
 
